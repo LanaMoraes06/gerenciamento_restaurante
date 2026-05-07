@@ -34,11 +34,11 @@ O sistema permite realizar as seguintes operações através de um menu interati
 3. Compile o código:
    ```bash
    g++ -o restaurante main.cpp
-   '''
-##📊 Estrutura de Dados (Esquema Relacional)
+   
+## 📊 Estrutura de Dados (Esquema Relacional)
 O sistema utiliza diversas tabelas relacionadas para garantir a integridade dos dados:
 
-##📝 Regras de Negócio Implementadas
+## 📝 Regras de Negócio Implementadas
 Unicidade: Não é permitido cadastrar dois clientes ou garçons com o mesmo código.
 
 Estoque Crítico: O sistema impede a venda de um produto caso qualquer um de seus ingredientes não possua quantidade suficiente em estoque.
