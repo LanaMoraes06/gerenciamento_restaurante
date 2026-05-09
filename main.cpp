@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string.h>
 using namespace std;
 
 struct Categoria {
@@ -65,7 +66,8 @@ void criarListas(Categoria *cats, Produto *prods, Ingrediente *ingredientes, Cli
 void leitura_categoria(struct Categoria cat[], int &contCAT);
 void leitura_produto(struct Produto prod[], int &contPROD);
 void leitura_ingredientes(struct Ingrediente ing[], int &contING);
-
+void inclusao_clientes(struct Cliente S[], int contS, struct Clientes T[], int contT, struct Clientes A[], int &contA); //2
+void inclusao_garcom(struct Garcom S[], int contS, struct Garcom T[], int contT, struct Garcom A[], int &contA); //3
 
 
 
@@ -466,3 +468,77 @@ void leitura_ingredientes(struct Ingrediente ing[], int &contING) {
     contING = i-1;
 }
 
+//2. Escreva uma função para permitir a inclusão de novos registros na tabela de Clientes.
+void inclusao_clientes(struct Cliente S[], int contS, struct Cliente T[], int contT, struct Cliente A[], int &contA) {
+    int i = 0, j = 0, k = 0;
+    for (;i < contS && j < contT;k++){
+            if (S[i].codigo < T[j].codigo){
+                A[k].codigo = S[i].codigo;
+                A[k].nome = S[i].nome;
+                A[k].telefone = S[i].telefone;
+                i++;
+            }
+        else if (T[j].codigo < S[i].codigo){
+            A[k].codigo = T[j].codigo;
+            A[k].nome = T[j].nome;
+            A[k].telefone = T[j].telefone;
+            j++;
+        } else {
+            A[k].codigo = S[i].codigo;
+            A[k].nome = S[i].nome;                          //2.1
+            A[k].telefone = S[i].telefone;
+            i++;
+            j++;
+        }}
+
+    while (i < contS){
+        A[k].codigo = S[i].codigo;
+        A[k].nome = S[i].nome;
+        A[k].telefone = S[i].telefone;
+        i++;
+        k++;
+    }
+    while (j < contT){
+        A[k].codigo = T[j].codigo;
+        A[k].nome = T[j].nome;
+        A[k].telefone = T[j].telefone;
+        j++;
+        k++;
+    }
+    contA = k;
+}
+
+//3.Escreva uma função para permitir a inclusão de novos registros na tabela de Garçons.
+void inclusao_garcom(struct Garcom S[], int contS, struct Garcom T[], int contT, struct Garcom A[], int &contA) {
+    int i = 0, j = 0, k = 0;
+    for (;i < contS && j < contT;k++){
+        if (S[i].codigo < T[j].codigo){
+            A[k].codigo = S[i].codigo;
+            A[k].nome = S[i].nome;
+            i++;
+        }
+        else if (T[j].codigo < S[i].codigo){
+            A[k].codigo = T[j].codigo;
+            A[k].nome = T[j].nome;
+            j++;
+        } else {
+            A[k].codigo = S[i].codigo;
+            A[k].nome = S[i].nome;                          //3.1
+            i++;
+            j++;
+        }}
+
+    while (i < contS){
+        A[k].codigo = S[i].codigo;
+        A[k].nome = S[i].nome;
+        i++;
+        k++;
+    }
+    while (j < contT){
+        A[k].codigo = T[j].codigo;
+        A[k].nome = T[j].nome;
+        j++;
+        k++;
+    }
+    contA = k;
+}
