@@ -6,14 +6,12 @@ struct Categoria {
     int codigo;
     string descricao;
 };
-
 struct Produto {
     int codigo;
     string descricao;
     int codigo_categoria;
     double preco_unitario;
 };
-
 struct Ingrediente {
     int codigo;
     string descricao;
@@ -23,31 +21,26 @@ struct Ingrediente {
     double preco_unitario;
 
 };
-
 struct Cliente {
     int codigo;
     string nome;
     int telefone;
 };
-
 struct Garcom {
     int codigo;
     string nome;
 };
-
 struct Pedido {
     int codigo;
     int codigo_cliente;
     int codigo_garcom;
     string data;
 };
-
 struct ItensPedido {
     int codigo_pedido;
     int codigo_produto;
     int quantidade;
 };
-
 struct ConsumoIngredientes {
     int codigo_produto;
     int codigo_ingrediente;
@@ -63,6 +56,15 @@ void criarListaPedido(Pedido *pedidos);
 void criarListaItensPedidos(ItensPedido *ips);
 void criarListaConsumoIngredientes(ConsumoIngredientes *cis);
 void criarListas(Categoria *cats, Produto *prods, Ingrediente *ingredientes, Cliente *clientes, Garcom *garcom, Pedido *pedido, ItensPedido *ips, ConsumoIngredientes *cis);
+int contListaProduto(Produto *produtos);
+Categoria findCategoria(Categoria *cats, int codCategoria, int endIndex);
+Produto findProduto(Produto *produtos, int codProduto, int endIndex);
+Ingrediente findIngrediente(Ingrediente *ingredientes, int codIngrediente, int endIndex);
+Cliente findCliente(Cliente *clientes, int codCliente, int endIndex);
+Garcom findGarcom(Garcom *garcons, int codGarcom, int endIndex);
+Pedido findPedido(Pedido *pedidos, int codPedido, int endIndex);
+ItensPedido findIps(ItensPedido *ics, int codPedido, int codProduto, int endIndex);
+ItensPedido findCis(ConsumoIngredientes *cis, int codPedido, int codIngrediente, int endIndex);
 void leitura_categoria(struct Categoria cat[], int &contCAT);
 void leitura_produto(struct Produto prod[], int &contPROD);
 void leitura_ingredientes(struct Ingrediente ing[], int &contING);
@@ -74,6 +76,21 @@ void inclusao_garcom(struct Garcom S[], int contS, struct Garcom T[], int contT,
 
 int main() {
 
+    Categoria cats[1000];
+    Produto prods[1000];
+    Ingrediente ingredientes[1000];
+    Cliente clientes[1000];
+    Garcom garcons[1000];
+    Pedido pedidos[1000];
+    ItensPedido ips[1000];
+    ConsumoIngredientes cis[1000];
+
+    criarListas(cats, prods, ingredientes, clientes, garcons, pedidos, ips, cis);
+
+
+    Categoria cat = findCategoria(cats, 2, 2);
+
+    cout << cat.descricao << endl;
 
     return 0;
 }
@@ -117,12 +134,12 @@ void criarListaProdutos(Produto* prods)
     prods[4].codigo_categoria = 2;
     prods[4].preco_unitario = 30.80;
 
-    prods[5].codigo = 6;
+    prods[5].codigo = 7;
     prods[5].descricao = "Pastel";
     prods[5].codigo_categoria = 2;
     prods[5].preco_unitario = 16.75;
 
-    prods[6].codigo = 7;
+    prods[6].codigo = 8;
     prods[6].descricao = "Tiramissu";
     prods[6].codigo_categoria = 3;
     prods[6].preco_unitario = 25.50;
@@ -320,11 +337,11 @@ void criarListaItensPedidos(ItensPedido* ips)
     ips[10].quantidade = 2;
 
     ips[11].codigo_pedido = 6;
-    ips[11].codigo_produto = 6;
+    ips[11].codigo_produto = 7;
     ips[11].quantidade = 1;
 
     ips[12].codigo_pedido = 6;
-    ips[12].codigo_produto = 7;
+    ips[12].codigo_produto = 8;
     ips[12].quantidade = 1;
 
 }
@@ -407,6 +424,169 @@ void criarListas(Categoria* cats, Produto* prods, Ingrediente* ingredientes, Cli
     criarListaConsumoIngredientes(cis);
 }
 
+int contListaProduto(Produto* produtos)
+{
+}
+
+Categoria findCategoria(Categoria* cats, int codCategoria, int endIndex)
+{
+    //Função realiza uma pesquisa binaria para encontrar o categoria
+    //codCategoria é o código que queremos encontrar
+    //endIndex é o tamanho do array
+    int inicio = 0;
+    int fim = endIndex;
+    int meio = (inicio + fim) / 2;
+
+    for (; inicio < fim && codCategoria != cats[meio].codigo; meio = (inicio + fim) / 2)
+    {
+        if (cats[meio].codigo > codCategoria)
+        {
+            fim = meio - 1;
+        }
+        else
+        {
+            inicio = meio + 1;
+        }
+    }
+    Categoria resultado = cats[meio];
+    return resultado;
+}
+
+Produto findProduto(Produto* produtos, int codProduto, int endIndex)
+{
+    //Função realiza uma pesquisa binaria para encontrar o produto
+    //codProduto é o código que queremos encontrar
+    //endIndex é o tamanho do array
+
+    int inicio = 0;
+    int fim = endIndex;
+    int meio = (inicio + fim) / 2;
+
+    for (; inicio < fim && codProduto != produtos[meio].codigo ; meio = (inicio + fim) / 2)
+    {
+        if(produtos[meio].codigo > codProduto)
+        {
+            fim = meio - 1;
+        }
+        else
+        {
+            inicio = meio + 1;
+        }
+    }
+
+    Produto resultado = produtos[meio];
+    return resultado;
+}
+
+Ingrediente findIngrediente(Ingrediente* ingredientes, int codIngrediente, int endIndex)
+{
+    //Função realiza uma pesquisa binaria para encontrar o ingrediente
+    //codIngrediente é o código que queremos encontrar
+    //endIndex é o tamanho do array
+    int inicio = 0;
+    int fim = endIndex;
+    int meio = (inicio + fim) / 2;
+
+    for (;inicio < fim && codIngrediente != ingredientes[meio].codigo; meio = (inicio + fim) / 2)
+    {
+        if (ingredientes[meio].codigo > codIngrediente)
+        {
+            fim = meio - 1;
+        }
+        else
+        {
+            inicio = meio + 1;
+        }
+    }
+
+    Ingrediente resultado = ingredientes[meio];
+    return resultado;
+}
+
+Cliente findCliente(Cliente* clientes, int codCliente, int endIndex)
+{
+    //Função realiza uma pesquisa binaria para encontrar o cliente
+    //codCliente é o código que queremos encontrar
+    //endIndex é o tamanho do array
+    int inicio = 0;
+    int fim = endIndex;
+    int meio = (inicio + fim) / 2;
+
+    for (;inicio < fim && codCliente != clientes[meio].codigo; meio = (inicio + fim) / 2)
+    {
+        if(clientes[meio].codigo > codCliente)
+        {
+            fim = meio - 1;
+        }
+        else
+        {
+            inicio = meio + 1;
+        }
+    }
+
+    Cliente resultado = clientes[meio];
+    return resultado;
+}
+
+Garcom findGarcom(Garcom* garcons, int codGarcom, int endIndex)
+{
+    //Função realiza uma pesquisa binaria para encontrar o garçom
+    //codGarçom é o código que queremos encontrar
+    //endIndex é o tamanho do array
+    int inicio = 0;
+    int fim = endIndex;
+    int meio = (inicio + fim) / 2;
+
+    for (; inicio < fim && codGarcom != garcons[meio].codigo; meio = (inicio + fim) / 2)
+    {
+        if(garcons[meio].codigo > codGarcom)
+        {
+            fim = meio - 1;
+        }
+        else
+        {
+            inicio = meio + 1;
+        }
+    }
+
+    Garcom resultado = garcons[meio];
+    return resultado;
+}
+
+Pedido findPedido(Pedido* pedidos, int codPedido, int endIndex)
+{
+    //Função realiza uma pesquisa binaria para encontrar o pedido
+    //codPedido é o código que queremos encontrar
+    //endIndex é o tamanho do array
+    int inicio = 0;
+    int fim = endIndex;
+    int meio = (inicio + fim) / 2;
+
+    for (; inicio<fim && codPedido != pedidos[meio].codigo; meio = (inicio + fim) / 2)
+    {
+        if(pedidos[meio].codigo > codPedido)
+        {
+            fim = meio - 1;
+        }
+        else
+        {
+            inicio = meio + 1;
+        }
+    }
+
+    Pedido resultado = pedidos[meio];
+    return resultado;
+}
+
+ItensPedido findIps(ItensPedido* ics, int codPedido, int codProduto, int endIndex)
+{
+}
+
+ItensPedido findCis(ConsumoIngredientes* cis, int codPedido, int codIngrediente, int endIndex)
+{
+}
+
+
 //1. Escreva funções específicas para a leitura dos dados das estruturas: Categorias, Produtos e Ingredientes.
 //1.1
 void leitura_categoria (struct Categoria cat[], int &contCAT){
@@ -467,6 +647,8 @@ void leitura_ingredientes(struct Ingrediente ing[], int &contING) {
     }
     contING = i-1;
 }
+
+
 
 //2. Escreva uma função para permitir a inclusão de novos registros na tabela de Clientes.
 void inclusao_clientes(struct Cliente S[], int contS, struct Cliente T[], int contT, struct Cliente A[], int &contA) {
