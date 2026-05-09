@@ -65,6 +65,7 @@ Garcom findGarcom(Garcom *garcons, int codGarcom, int endIndex);
 Pedido findPedido(Pedido *pedidos, int codPedido, int endIndex);
 ItensPedido findIps(ItensPedido *ics, int codPedido, int codProduto, int endIndex);
 ItensPedido findCis(ConsumoIngredientes *cis, int codPedido, int codIngrediente, int endIndex);
+void removerProduto(Produto* produtos, int endIndexProdutos, int* codsProdutosExclusão, int endIndexExclusão, Produto* listaFinal, int &contFinal);
 void leitura_categoria(struct Categoria cat[], int &contCAT);
 void leitura_produto(struct Produto prod[], int &contPROD);
 void leitura_ingredientes(struct Ingrediente ing[], int &contING);
@@ -88,9 +89,18 @@ int main() {
     criarListas(cats, prods, ingredientes, clientes, garcons, pedidos, ips, cis);
 
 
-    Categoria cat = findCategoria(cats, 2, 2);
+    Produto produstosFinal[1000];
+    int CodParaExclusão[2]{2, 5};
+    int endIndexFinal;
 
-    cout << cat.descricao << endl;
+    removerProduto(prods, 6, CodParaExclusão, 1, produstosFinal ,endIndexFinal);
+
+    cout << "Ultimo index: " << endIndexFinal << endl;
+    for (int i = 0; i < endIndexFinal; i++)
+    {
+        cout << produstosFinal[i].descricao << endl;
+    }
+
 
     return 0;
 }
@@ -584,6 +594,27 @@ ItensPedido findIps(ItensPedido* ics, int codPedido, int codProduto, int endInde
 
 ItensPedido findCis(ConsumoIngredientes* cis, int codPedido, int codIngrediente, int endIndex)
 {
+}
+
+void removerProduto(Produto* produtos, int endIndexProdutos, int* codsProdutosExclusão, int endIndexExclusão, Produto* listaFinal, int &contFinal)
+{
+    int i = 0;
+    int j = 0;
+    int k = 0;
+
+    for (; j < endIndexExclusão || i <= endIndexProdutos; i++)
+    {
+        if (produtos[i].codigo != codsProdutosExclusão[j])
+        {
+            listaFinal[k] = produtos[i];
+            k++;
+        }
+        else
+        {
+            j++;
+        }
+    }
+    contFinal = k;
 }
 
 
