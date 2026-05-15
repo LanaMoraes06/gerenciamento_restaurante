@@ -68,6 +68,8 @@ void leitura_produto(struct Produto prod[], int &contPROD);
 void leitura_ingredientes(struct Ingrediente ing[], int &contING);
 void inclusao_clientes(struct Cliente S[], int contS, struct Clientes T[], int contT, struct Clientes A[], int &contA); //2
 void inclusao_garcom(struct Garcom S[], int contS, struct Garcom T[], int contT, struct Garcom A[], int &contA); //3
+void consulta_ingrediente(struct Ingrediente S[], int constS);
+void exibir_minimo(struct Ingrediente S[], int contS);
 
 
 
@@ -541,4 +543,68 @@ void inclusao_garcom(struct Garcom S[], int contS, struct Garcom T[], int contT,
         k++;
     }
     contA = k;
+}
+
+//7. Escreva uma função para permitir ao usuário consultar os dados de determinado ingrediente.
+void consulta_ingrediente(struct Ingrediente S[], int tamanho) {
+    char resp;
+    do {
+        int cod = 0;
+        cout << "Selecione o código do ingrediente que deseja consultar: " << endl;
+        for (int i = 0; i < tamanho; i++) {
+            cout << S[i].codigo << " - " << S[i].descricao << endl;
+        }
+        cout << "Escolha: ";
+        cin >> cod;
+        for (int i = 0; i < tamanho; i++) {
+            if (S[i].codigo == cod) {
+                cout <<"Codigo: "<< S[i].codigo << endl;
+                cout << "Descricao: "<< S[i].descricao << endl;
+                cout << "Quantidade estoque: " << S[i].quant_estoque;
+                cout << "Estoque minimo: " << S[i].estoque_minimo;
+                cout << "Estoque maximo: " << S[i].estoque_maximo;
+                cout << "Preco unitario R$: " << S[i].preco_unitario;
+                cout << "Valor total em estoque: " << (S[i].quant_estoque * S[i].preco_unitario);
+            }
+        }
+        cout << "Deseja consultar mais ingredientes?" << endl;
+        cout << "Escolha: ";
+        cin >> resp;
+    }while (resp == 's' || resp == 'S');
+}
+
+//8. Escreva uma função para exibir todos os ingredientes que estejam com a quantidade em estoque abaixo do estoque mínimo.
+//8.1) As seguintes informações devem ser exibidas: Código, Descrição, Quantidade em estoque, Estoque máximo, Quantidade a ser comprada, Valor da compra
+//8.1.1) A quantidade a ser comprada é calculada pela diferença entre o estoque máximo e a quantidade em estoque
+//8.2) Ao final, a função deverá exibir o valor total a ser gasto na reposição de ingredientes
+
+void exibir_minimo(struct Ingrediente S[], int tamanho) {
+    double valorTotal = 0;
+    for (int i = 0; i < tamanho; i++) {
+        if (S[i].quant_estoque < S[i].estoque_minimo) {
+            int qtdCompra = S[i].estoque_maximo - S[i].quant_estoque;
+            double valorCompra = qtdCompra * S[i].preco_unitario;
+            cout <<"Codigo: "<< S[i].codigo << endl;
+            cout << "Descricao: "<< S[i].descricao << endl;
+            cout << "Quantidade estoque: " << S[i].quant_estoque << endl;
+            cout << "Estoque maximo: " << S[i].estoque_maximo << endl;
+            cout << "Quantidade a ser comprada: " << qtdCompra << endl;
+            cout << "Valor da compra R$: " << valorCompra << endl;
+            valorTotal += valorCompra;
+        }
+    }
+    cout << "Valor total da compra R$: " << valorTotal;
+}
+
+//9. Escreva uma função para exibir o valor total arrecadado com todos os pedidos.
+//9.1) O valor de cada pedido deve ser calculado pela soma dos valores de seus itens
+//9.2) O valor de cada item é calculado multiplicando a quantidade pelo preço unitário do produto
+
+void valor_arrecadado(struct Pedido P[], struct ItensPedido I[], struct  Produto PD[], int tamanho) {
+    int valorItem=0;
+    for (int i = 0; i < tamanho; i++) {
+        for (int j = 0; j < tamanho; j++) {
+            valorItem += PD[j].preco_unitario * P[j];
+        }
+    }
 }
