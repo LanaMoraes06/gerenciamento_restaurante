@@ -66,6 +66,8 @@ Pedido findPedido(Pedido *pedidos, int codPedido, int endIndex);
 ItensPedido findIps(ItensPedido *ics, int codPedido, int codProduto, int endIndex);
 ItensPedido findCis(ConsumoIngredientes *cis, int codPedido, int codIngrediente, int endIndex);
 void removerProduto(Produto* produtos, int endIndexProdutos, int* codsProdutosExclusão, int endIndexExclusão, Produto* listaFinal, int &contFinal);
+Pedido createPedido(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidos, int endIndexPedidos);
+void inserirPedido(Pedido* pedidos, int endIndexPedido, Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidoResultado, int &endIndexResultado);
 void leitura_categoria(struct Categoria cat[], int &contCAT);
 void leitura_produto(struct Produto prod[], int &contPROD);
 void leitura_ingredientes(struct Ingrediente ing[], int &contING);
@@ -87,21 +89,22 @@ int main() {
     ConsumoIngredientes cis[1000];
 
     criarListas(cats, prods, ingredientes, clientes, garcons, pedidos, ips, cis);
+    //
+    // Pedido p  = findPedido(pedidos, 2, 5);
+    //
+    // cout << p.codigo << endl;
+    // cout << p.codigo_cliente << endl;
+    // cout << p.codigo_garcom << endl;
+    // cout << p.data << endl;
 
+    Pedido pedidosResultado[1000];
+    int index;
+    inserirPedido(pedidos, 5, clientes, 3, garcons, 1, pedidosResultado, index);
 
-    Produto produstosFinal[1000];
-    int CodParaExclusão[2]{2, 5};
-    int endIndexFinal;
-
-    removerProduto(prods, 6, CodParaExclusão, 1, produstosFinal ,endIndexFinal);
-
-    cout << "Ultimo index: " << endIndexFinal << endl;
-    for (int i = 0; i < endIndexFinal; i++)
+    for (int i = 0; i < index; i++)
     {
-        cout << produstosFinal[i].descricao << endl;
+        cout << pedidosResultado[i].codigo << endl;;
     }
-
-
     return 0;
 }
 
@@ -248,7 +251,7 @@ void criarListaClientes(Cliente* clientes)
     clientes[1].nome = "Matheus";
     clientes[1].telefone = 88888888888;
 
-    clientes[2].codigo = 1;
+    clientes[2].codigo = 4;
     clientes[2].nome = "Ana";
     clientes[2].telefone = 77777777777;
 
@@ -617,6 +620,70 @@ void removerProduto(Produto* produtos, int endIndexProdutos, int* codsProdutosEx
     contFinal = k;
 }
 
+Pedido createPedido(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidos, int endIndexPedidos)
+{
+    int idCliente = 0;
+    int idGarcom = 0;
+    Cliente c;
+    Garcom g;
+    Pedido p;
+
+    cout << "\n<=====Adicionar novo pedido=====>" << endl;
+
+    cout << "\n\nDigite o codigo do pedido: ";
+    cin >> p.codigo;
+    Pedido p2 = findPedido(pedidos, p.codigo, endIndexPedidos);
+
+    if (p2.codigo == p.codigo)
+    {
+        cout << "\n\nCodigo repetido;" << endl;
+    }
+    else
+    {
+        cout << "\nDigite o codigo do Cliente: ";
+        cin >> idCliente;
+        c = findCliente(clientes, idCliente,endIndexCLiente);
+        cout << "\n\nNome do cliente: " << c.nome << endl;
+        cout << "\nDigite o codigo do Garçom: ";
+        cin >> idGarcom;
+        g = findGarcom(garcons, idGarcom, endIndexGarcom);
+        cout << "\n\nNome do garçom: " << g.nome << endl;
+        cout <<"\n\nDigite a data[dd/mm/yyyy]: ";
+        cin >> p.data;
+        p.codigo_cliente = c.codigo;
+        p.codigo_garcom = g.codigo;
+
+        return p;
+    }
+}
+
+void inserirPedido(Pedido* pedidos, int endIndexPedido, Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidoResultado, int &endIndexResultado)
+{
+    char confirma = 'S';
+    do
+    {
+        Pedido p = createPedido(clientes, endIndexCLiente, garcons, endIndexGarcom, pedidos, endIndexPedido);
+
+        for (int i = 0; i < endIndexPedido; i++)
+        {
+            if (p.codigo > pedidos[i].codigo)
+            {
+                pedidoResultado[i] = pedidos[i];
+                endIndexResultado++;
+            }
+            if (p.codigo < pedidos[i].codigo)
+            {
+                pedidoResultado[i] = p;
+                endIndexResultado++;
+            }
+        }
+
+        cout << "\n\nPedido Adicionado!!!";
+        cout << "\nDeseja adicionar outro pedido?[S/N]: ";
+        cin >> confirma;
+    } while (confirma == 'S' || confirma == 's');
+}12
+
 
 //1. Escreva funções específicas para a leitura dos dados das estruturas: Categorias, Produtos e Ingredientes.
 //1.1
@@ -678,8 +745,6 @@ void leitura_ingredientes(struct Ingrediente ing[], int &contING) {
     }
     contING = i-1;
 }
-
-
 
 //2. Escreva uma função para permitir a inclusão de novos registros na tabela de Clientes.
 void inclusao_clientes(struct Cliente S[], int contS, struct Cliente T[], int contT, struct Cliente A[], int &contA) {
