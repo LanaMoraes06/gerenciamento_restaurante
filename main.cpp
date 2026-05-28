@@ -68,6 +68,8 @@ ItensPedido findCis(ConsumoIngredientes *cis, int codPedido, int codIngrediente,
 void removerProduto(Produto* produtos, int endIndexProdutos, int* codsProdutosExclusão, int endIndexExclusão, Produto* listaFinal, int &contFinal);
 Pedido createPedido(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidos, int endIndexPedidos);
 void inserirPedido(Pedido* pedidos, int endIndexPedido, Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidoResultado, int &endIndexResultado);
+ItensPedido inserirProdutoNoPedido(Pedido pedido, Produto produto, int qtde);
+void telaInserirProdutoNoPedido(Produto *produtos, int endIndexProdutos, Categoria *categorias, int endIndexCategoria);
 void leitura_categoria(struct Categoria cat[], int &contCAT);
 void leitura_produto(struct Produto prod[], int &contPROD);
 void leitura_ingredientes(struct Ingrediente ing[], int &contING);
@@ -89,22 +91,8 @@ int main() {
     ConsumoIngredientes cis[1000];
 
     criarListas(cats, prods, ingredientes, clientes, garcons, pedidos, ips, cis);
-    //
-    // Pedido p  = findPedido(pedidos, 2, 5);
-    //
-    // cout << p.codigo << endl;
-    // cout << p.codigo_cliente << endl;
-    // cout << p.codigo_garcom << endl;
-    // cout << p.data << endl;
 
-    Pedido pedidosResultado[1000];
-    int index;
-    inserirPedido(pedidos, 5, clientes, 3, garcons, 1, pedidosResultado, index);
-
-    for (int i = 0; i < index; i++)
-    {
-        cout << pedidosResultado[i].codigo << endl;;
-    }
+    telaInserirProdutoNoPedido(prods, 6, cats, 2);
     return 0;
 }
 
@@ -682,7 +670,59 @@ void inserirPedido(Pedido* pedidos, int endIndexPedido, Cliente *clientes, int e
         cout << "\nDeseja adicionar outro pedido?[S/N]: ";
         cin >> confirma;
     } while (confirma == 'S' || confirma == 's');
-}12
+}
+
+ItensPedido inserirProdutoNoPedido(int pedido, int produto, int qtde)
+{
+    ItensPedido i;
+    i.codigo_pedido = pedido;
+    i.codigo_produto = produto;
+    i.quantidade = qtde;
+
+    return i;
+}
+
+void telaInserirProdutoNoPedido(Produto *produtos, int endIndexProduto, Categoria *categorias, int endIndexCategorias)
+{
+    Produto *produtosIncluidos[100];
+    int endIndexProdutoIncluidos = 0;
+    ItensPedido i;
+    char confirma = 'S';
+    int codPedido = 0;
+    int codProduto = 0;
+    int qtde = 0;
+    do
+    {
+
+        cout << "\n\nDigite o codigo do Pedido: ";
+        cin >> codPedido;
+        cout << "\n\nDigite o codigo do Produto: ";
+        cin >> codProduto;
+
+        Produto p = findProduto(produtos, codProduto, endIndexProduto);
+
+        cout << "Codigo do produto: " <<p.codigo << endl;
+        cout << "Nome do produto: " <<p.codigo << endl;
+
+        Categoria c = findCategoria(categorias, p.codigo_categoria ,endIndexCategorias);
+
+        cout << "Categoria: " << c.descricao  << endl;
+        cout << "Valor: " << p.preco_unitario<< endl;
+
+        cout << "\n\nDigite a quantidade do produto: ";
+        cin >> qtde;
+
+        produtosIncluidos[endIndexProdutoIncluidos] = &p;
+        endIndexProdutoIncluidos++;
+        i = inserirProdutoNoPedido(codPedido, codProduto, qtde);
+
+        cout << "\n\nDeseja adicionar outro produto a um pedido[S/N]: ";
+        cin >> confirma;
+    }while (confirma == 'S' || confirma == 's');
+
+    cout << i.codigo_pedido << endl;
+    cout << i.codigo_produto << endl;
+}
 
 
 //1. Escreva funções específicas para a leitura dos dados das estruturas: Categorias, Produtos e Ingredientes.
