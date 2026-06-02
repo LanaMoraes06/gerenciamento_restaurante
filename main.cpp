@@ -89,6 +89,22 @@ void leitura_produto(struct Produto prod[], int &contPROD);
 void leitura_ingredientes(struct Ingrediente ing[], int &contING);
 void inclusao_clientes(struct Cliente S[], int contS, struct Clientes T[], int contT, struct Clientes A[], int &contA); //2
 void inclusao_garcom(struct Garcom S[], int contS, struct Garcom T[], int contT, struct Garcom A[], int &contA); //3
+ItensPedido findIps(ItensPedido *ics, int codPedido, int codProduto, int endIndex);
+ItensPedido findCis(ConsumoIngredientes *cis, int codPedido, int codIngrediente, int endIndex);
+void removerProduto(Produto* produtos, int endIndexProdutos, int* codsProdutosExclusão, int endIndexExclusão, Produto* listaFinal, int &contFinal);
+void lerCategoria(struct Categoria cat[], int &contCAT);
+void lerProduto(struct Produto prod[], int &contPROD);
+void lerIngrediente(struct Ingrediente ing[], int &contING);
+void lerCliente(struct Cliente cli[], int &contCLI);
+void lerGarcom(struct Garcom garcom[], int &contGARCOM);
+void incluirCliente(struct Cliente S[], int contS, struct Clientes T[], int contT, struct Clientes A[], int &contA); //2
+void incluirGarcom(struct Garcom S[], int contS, struct Garcom T[], int contT, struct Garcom A[], int &contA); //3
+void incluirCategoria(struct Categoria S[], int contS, struct Categoria T[], int contT, struct Categoria A[], int &contA);
+void incluirProduto(struct Produto S[], int contS, struct Produto T[], int contT, struct Produto A[], int &contA);
+void incluirIngrediente(struct Ingrediente S[], int contS, struct Ingrediente T[], int contT, struct Ingrediente A[], int &contA);
+void consultarIngrediente(struct Ingrediente S[], int constS);
+void exibirMinimo(struct Ingrediente S[], int contS);
+void valorTotal(Pedido pedidos[], int contPedidos, ItensPedido itens[], int contItens, Produto produtos[], int contProdutos);
 
 
 
@@ -321,10 +337,12 @@ void criarListaPedido(Pedido* pedidos, int &endIndex)
     endIndex = 5;
 
 }
-void criarListaItensPedidos(ItensPedido* ips, int &endIndex)
+
+  
+void criarListaItensPedidos(ItensPedido* ips, Pedido* pedidos, Produto* produto)
 {
     //Inicializar lista de itens no pedido
-    ips[0].codigo_pedido = 1;
+    ips[0].codigo_pedido = 0;
     ips[0].codigo_produto = 1;
     ips[0].quantidade = 1;
 
@@ -604,6 +622,7 @@ Pedido findPedido(Pedido* pedidos, int codPedido, int endIndex)
     Pedido resultado = pedidos[meio];
     return resultado;
 }
+
 void findCisByProdutos(ConsumoIngredientes* cis, int endIndexCis, int codProduto, ConsumoIngredientes *cisRetorno, int &endIndexCisRetorno)
 {
     //Esse é um metodo find incremental, por que a cada find ele aumenta o tamanho da lista de consumo de ingredientes que ela recebe como cisRetorno
@@ -624,6 +643,14 @@ void findCisByProdutos(ConsumoIngredientes* cis, int endIndexCis, int codProduto
 }
 
 
+ItensPedido findIps(ItensPedido* ics, int codPedido, int endIndex){
+
+}
+
+ItensPedido findCis(ConsumoIngredientes* cis, int codPedido, int codIngrediente, int endIndex){
+
+}
+
 //Exercicio 4 - Escreva uma função para permitir a exclusão de registros da tabela de Produtos.
 void removerProduto(Produto* produtos, int &endIndexProdutos, int* codsProdutosExclusão, int endIndexExclusão)
 {
@@ -632,7 +659,7 @@ void removerProduto(Produto* produtos, int &endIndexProdutos, int* codsProdutosE
     int i = 0;
     int j = 0;
     int k = 0;
-
+  
     for (; j <= endIndexExclusão || i <= endIndexProdutos; i++)
     {
         if (produtos[i].codigo != codsProdutosExclusão[j])
@@ -927,7 +954,7 @@ void telaInserirProdutoNoPedido(Produto *produtos, int endIndexProduto, Categori
 
 //1. Escreva funções específicas para a leitura dos dados das estruturas: Categorias, Produtos e Ingredientes.
 //1.1
-void leitura_categoria (struct Categoria cat[], int &contCAT){
+void lerCategoria (struct Categoria cat[], int &contCAT){
     int i = 0;
     cout << "-_-_-_- LEITURA CATEGORIA -_-_-_-";
     for (int saida = 1; i < 1000 && saida != 0; i++){
@@ -943,7 +970,7 @@ void leitura_categoria (struct Categoria cat[], int &contCAT){
 }
 
 //1.2
-void leitura_produto(struct Produto prod[], int &contPROD) {
+void lerProduto(struct Produto prod[], int &contPROD) {
     int i = 0;
     cout << "-_-_-_- LEITURA PRODUTOS -_-_-_-";
     for (int saida = 1; i < 1000 && saida != 0; i++) {
@@ -963,7 +990,7 @@ void leitura_produto(struct Produto prod[], int &contPROD) {
 }
 
 //1.3
-void leitura_ingredientes(struct Ingrediente ing[], int &contING) {
+void lerIngrediente(struct Ingrediente ing[], int &contING) {
     int i = 0;
     cout << "-_-_-_- LEITURA INGREDIENTES -_-_-_-";
     for (int saida = 1; i < 1000 && saida != 0; i++) {
@@ -986,11 +1013,75 @@ void leitura_ingredientes(struct Ingrediente ing[], int &contING) {
     contING = i-1;
 }
 
+//Necessário para a verificar se não há repetição
+void lerCliente(struct Cliente cli[], int &contCLI) {
+    int i = 0;
+    cout << "-_-_-_- LER CLIENTE -_-_-_-";
+    for (int saida = 1; i < 1000 && saida != 0; i++) {
+        int tempCodigo;
+        cout << "\nCodigo do Cliente " << (i + 1) << " (Digite 0 para sair): ";
+        cin >> tempCodigo;
+        if (tempCodigo > 0) {
+            bool existe = false;
+            for (int j = 0; j < i; j++) {
+                if (cli[j].codigo == tempCodigo) {
+                    existe = true;
+                    break;
+                }
+            }
+            if (!existe) {
+                cli[i].codigo = tempCodigo;
+                cout << "Nome: ";
+                getline(cin >> ws, cli[i].nome);
+                cout << "Telefone: ";
+                cin >> cli[i].telefone;
+
+                i++;
+            } else {
+                cout << "Codigo ja cadastrado no sistema!";
+            }
+        }
+        else saida = 0;
+    }
+    contCLI = i - 1;
+}
+
+
+void lerGarcom(struct Garcom garcom[], int &contGARCOM) {
+    int i = 0;
+    cout << "-_-_-_- LER GARCOM -_-_-_-";
+    for (int saida = 1; i < 1000 && saida != 0; i++) {
+        int tempCodigo;
+        cout << "\nCodigo do Cliente " << (i + 1) << " (Digite 0 para sair): ";
+        cin >> tempCodigo;
+        if (tempCodigo > 0) {
+            bool existe = false;
+            for (int j = 0; j < i; j++) {
+                if (garcom[j].codigo == tempCodigo) {
+                    existe = true;
+                    break;
+                }
+            }
+            if (!existe) {
+                garcom[i].codigo = tempCodigo;
+                cout << "Nome: ";
+                getline(cin >> ws, garcom[i].nome);
+                i++;
+            } else {
+                cout << "Codigo ja cadastrado no sistema!";
+            }
+        }
+        else saida = 0;
+    }
+    contGARCOM = i - 1;
+}
+
+
 //2. Escreva uma função para permitir a inclusão de novos registros na tabela de Clientes.
-void inclusao_clientes(struct Cliente S[], int contS, struct Cliente T[], int contT, struct Cliente A[], int &contA) {
+void incluirCliente(struct Cliente S[], int contS, struct Cliente T[], int contT, struct Cliente A[], int &contA) {
     int i = 0, j = 0, k = 0;
     for (;i < contS && j < contT;k++){
-            if (S[i].codigo < T[j].codigo){
+        if (S[i].codigo < T[j].codigo){
                 A[k].codigo = S[i].codigo;
                 A[k].nome = S[i].nome;
                 A[k].telefone = S[i].telefone;
@@ -1025,9 +1116,137 @@ void inclusao_clientes(struct Cliente S[], int contS, struct Cliente T[], int co
     }
     contA = k;
 }
+//Incluir Categoria, Produto e ingrediente
+void incluirCategoria(struct Categoria S[], int contS, struct Categoria T[], int contT, struct Categoria A[], int &contA) {
+    int i = 0, j = 0, k = 0;
+    for (;i < contS && j < contT;k++){
+        if (S[i].codigo < T[j].codigo){
+            A[k].codigo = S[i].codigo;
+            A[k].descricao = S[i].descricao;
+            i++;
+        }
+        else if (T[j].codigo < S[i].codigo){
+            A[k].codigo = T[j].codigo;
+            A[k].descricao = T[j].descricao;
+            j++;
+        } else {
+            A[k].codigo = S[i].codigo;
+            A[k].descricao = S[i].descricao;                          //2.1
+            i++;
+            j++;
+        }}
+
+    while (i < contS){
+        A[k].codigo = S[i].codigo;
+        A[k].descricao = S[i].descricao;
+        i++;
+        k++;
+    }
+    while (j < contT){
+        A[k].codigo = T[j].codigo;
+        A[k].descricao = T[j].descricao;
+        j++;
+        k++;
+    }
+    contA = k;
+}
+
+void incluirProduto(struct Produto S[], int contS, struct Produto T[], int contT, struct Produto A[], int &contA) {
+    int i = 0, j = 0, k = 0;
+    for (;i < contS && j < contT;k++){
+        if (S[i].codigo < T[j].codigo){
+            A[k].codigo = S[i].codigo;
+            A[k].descricao = S[i].descricao;
+            A[k].codigo_categoria = S[i].codigo_categoria;
+            A[k].preco_unitario = S[i].preco_unitario;
+            i++;
+        }
+        else if (T[j].codigo < S[i].codigo){
+            A[k].codigo = T[j].codigo;
+            A[k].descricao = T[j].descricao;
+            A[k].codigo_categoria = T[j].codigo_categoria;
+            A[k].preco_unitario = T[j].preco_unitario;
+            j++;
+        } else {
+            A[k].codigo = S[i].codigo;
+            A[k].descricao = S[i].descricao;                          //2.1
+            A[k].codigo_categoria = S[i].codigo_categoria;
+            A[k].preco_unitario = S[i].preco_unitario;
+            i++;
+            j++;
+        }}
+
+    while (i < contS){
+        A[k].codigo = S[i].codigo;
+        A[k].descricao = S[i].descricao;
+        A[k].codigo_categoria = S[i].codigo_categoria;
+        A[k].preco_unitario = S[i].preco_unitario;
+        i++;
+        k++;
+    }
+    while (j < contT){
+        A[k].codigo = T[j].codigo;
+        A[k].descricao = T[j].descricao;
+        A[k].codigo_categoria = T[j].codigo_categoria;
+        A[k].preco_unitario = T[j].preco_unitario;
+        j++;
+        k++;
+    }
+    contA = k;
+}
+
+void incluirIngredientes(struct Ingrediente S[], int contS, struct Ingrediente T[], int contT, struct Ingrediente A[], int &contA) {
+    int i = 0, j = 0, k = 0;
+    for (;i < contS && j < contT;k++){
+        if (S[i].codigo < T[j].codigo){
+            A[k].codigo = S[i].codigo;
+            A[k].descricao = S[i].descricao;
+            A[k].quant_estoque = S[i].quant_estoque;
+            A[k].estoque_minimo = S[i].estoque_minimo;
+            A[k].estoque_maximo = S[i].estoque_maximo;
+            i++;
+        }
+        else if (T[j].codigo < S[i].codigo){
+            A[k].codigo = T[j].codigo;
+            A[k].descricao = T[j].descricao;
+            A[k].quant_estoque = T[j].quant_estoque;
+            A[k].estoque_minimo = T[j].estoque_minimo;
+            A[k].estoque_maximo = T[j].estoque_maximo;
+            j++;
+        } else {
+            A[k].codigo = S[i].codigo;
+            A[k].descricao = S[i].descricao;                          //2.1
+            A[k].quant_estoque = S[i].quant_estoque;
+            A[k].estoque_minimo = S[i].estoque_minimo;
+            A[k].estoque_maximo = S[i].estoque_maximo;
+            i++;
+            j++;
+        }}
+
+    while (i < contS){
+        A[k].codigo = S[i].codigo;
+        A[k].descricao = S[i].descricao;
+        A[k].quant_estoque = S[i].quant_estoque;
+        A[k].estoque_minimo = S[i].estoque_minimo;
+        A[k].estoque_maximo = S[i].estoque_maximo;
+        i++;
+        k++;
+    }
+    while (j < contT){
+        A[k].codigo = T[j].codigo;
+        A[k].descricao = T[j].descricao;
+        A[k].quant_estoque = T[j].quant_estoque;
+        A[k].estoque_minimo = T[j].estoque_minimo;
+        A[k].estoque_maximo = T[j].estoque_maximo;
+        j++;
+        k++;
+    }
+    contA = k;
+}
+
 
 //3.Escreva uma função para permitir a inclusão de novos registros na tabela de Garçons.
-void inclusao_garcom(struct Garcom S[], int contS, struct Garcom T[], int contT, struct Garcom A[], int &contA) {
+void incluirGarcom(struct Garcom S[], int contS, struct Garcom T[], int contT, struct Garcom A[], int &contA) {
     int i = 0, j = 0, k = 0;
     for (;i < contS && j < contT;k++){
         if (S[i].codigo < T[j].codigo){
@@ -1059,4 +1278,83 @@ void inclusao_garcom(struct Garcom S[], int contS, struct Garcom T[], int contT,
         k++;
     }
     contA = k;
+}
+
+//7. Escreva uma função para permitir ao usuário consultar os dados de determinado ingrediente.
+void consultarIngrediente(struct Ingrediente S[], int tamanho) {
+    char resp;
+    do {
+        int cod = 0;
+        cout << "\nSelecione o codigo do ingrediente que deseja consultar:" << endl;
+        for (int i = 0; i < tamanho; i++) {
+            cout << S[i].codigo << " - " << S[i].descricao << endl;
+        }
+        cout << "Escolha: ";
+        cin >> cod;
+        Ingrediente ingredienteEncontrado = findIngrediente(S, cod, tamanho - 1);
+        if (ingredienteEncontrado.codigo == cod) {
+            cout << "\n--- DADOS DO INGREDIENTE ---" << endl;
+            cout << "Codigo: " << ingredienteEncontrado.codigo << endl;
+            cout << "Descricao: " << ingredienteEncontrado.descricao << endl;
+            cout << "Quantidade estoque: " << ingredienteEncontrado.quant_estoque << endl;
+            cout << "Estoque minimo: " << ingredienteEncontrado.estoque_minimo << endl;
+            cout << "Estoque maximo: " << ingredienteEncontrado.estoque_maximo << endl;
+            cout << "Preco unitario R$: " << ingredienteEncontrado.preco_unitario << endl;
+            cout << "Valor total em estoque R$: " << (ingredienteEncontrado.quant_estoque * ingredienteEncontrado.preco_unitario) << endl;
+            cout << "----------------------------\n" << endl;
+        } else {
+            cout << "\nIngrediente com codigo " << cod << " nao encontrado!\n" << endl;
+        }
+
+        cout << "Deseja consultar mais ingredientes? (S/N): ";
+        cin >> resp;
+
+    } while (resp == 's' || resp == 'S');
+}
+
+//8. Escreva uma função para exibir todos os ingredientes que estejam com a quantidade em estoque abaixo do estoque mínimo.
+//8.1) As seguintes informações devem ser exibidas: Código, Descrição, Quantidade em estoque, Estoque máximo, Quantidade a ser comprada, Valor da compra
+//8.1.1) A quantidade a ser comprada é calculada pela diferença entre o estoque máximo e a quantidade em estoque
+//8.2) Ao final, a função deverá exibir o valor total a ser gasto na reposição de ingredientes
+
+void exibirMinimo(struct Ingrediente S[], int tamanho) {
+    double valorTotal = 0;
+    for (int i = 0; i < tamanho; i++) {
+        if (S[i].quant_estoque < S[i].estoque_minimo) {
+            int qtdCompra = S[i].estoque_maximo - S[i].quant_estoque;
+            double valorCompra = qtdCompra * S[i].preco_unitario;
+            cout <<"Codigo: "<< S[i].codigo << endl;
+            cout << "Descricao: "<< S[i].descricao << endl;
+            cout << "Quantidade estoque: " << S[i].quant_estoque << endl;
+            cout << "Estoque maximo: " << S[i].estoque_maximo << endl;
+            cout << "Quantidade a ser comprada: " << qtdCompra << endl;
+            cout << "Valor da compra R$: " << valorCompra << endl;
+            valorTotal += valorCompra;
+        }
+    }
+    cout << "Valor total da compra R$: " << valorTotal;
+}
+
+//9. Escreva uma função para exibir o valor total arrecadado com todos os pedidos.
+//9.1) O valor de cada pedido deve ser calculado pela soma dos valores de seus itens
+//9.2) O valor de cada item é calculado multiplicando a quantidade pelo preço unitário do produto
+
+void valorTotal(Pedido pedidos[], int contPedidos, ItensPedido itens[], int contItens, Produto produtos[], int contProdutos) {
+    double totalGeral = 0;
+    cout << "\n--- RELATORIO DE ARRECADACAO ---" << endl;
+
+    for (int i = 0; i < contPedidos; i++) {
+        double valorPedido = 0;
+        for (int j = 0; j < contItens; j++) {
+            if (itens[j].codigo_pedido == pedidos[i].codigo) {
+                Produto prod = findProduto(produtos, itens[j].codigo_produto, contProdutos - 1);
+                valorPedido += prod.preco_unitario * itens[j].quantidade;
+            }
+        }
+        cout << "Pedido " << pedidos[i].codigo << " - Valor R$: " << valorPedido << endl;
+        totalGeral += valorPedido;
+    }
+
+    cout << "--------------------------------" << endl;
+    cout << "Valor total R$: " << totalGeral << endl;
 }
