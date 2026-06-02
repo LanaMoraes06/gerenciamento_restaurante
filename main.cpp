@@ -75,7 +75,7 @@ void incluirCliente(struct Cliente S[], int contS, struct Clientes T[], int cont
 void incluirGarcom(struct Garcom S[], int contS, struct Garcom T[], int contT, struct Garcom A[], int &contA); //3
 void incluirCategoria(struct Categoria S[], int contS, struct Categoria T[], int contT, struct Categoria A[], int &contA);
 void incluirProduto(struct Produto S[], int contS, struct Produto T[], int contT, struct Produto A[], int &contA);
-void incluirIngrediente(struct Ingrediente S[], int contS, struct; Ingrediente T[], int contT, struct; Ingrediente A[], int &contA);
+void incluirIngrediente(struct Ingrediente S[], int contS, struct Ingrediente T[], int contT, struct Ingrediente A[], int &contA);
 void consultarIngrediente(struct Ingrediente S[], int constS);
 void exibirMinimo(struct Ingrediente S[], int contS);
 void valorTotal(Pedido pedidos[], int contPedidos, ItensPedido itens[], int contItens, Produto produtos[], int contProdutos);
