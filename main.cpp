@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string.h>
 using namespace std;
 
 struct Categoria {
@@ -47,22 +46,49 @@ struct ConsumoIngredientes {
     int quantidade_necessaria;
 };
 
-void criarListaCategorias(Categoria *cats);
-void criarListaProdutos(Produto *prods);
-void criarListaIngredientes(Ingrediente *ingredientes);
-void criarListaClientes(Cliente *clientes);
-void criarListaGarcom(Garcom *garcons);
-void criarListaPedido(Pedido *pedidos);
-void criarListaItensPedidos(ItensPedido *ips);
-void criarListaConsumoIngredientes(ConsumoIngredientes *cis);
-void criarListas(Categoria *cats, Produto *prods, Ingrediente *ingredientes, Cliente *clientes, Garcom *garcom, Pedido *pedido, ItensPedido *ips, ConsumoIngredientes *cis);
-int contListaProduto(Produto *produtos);
+
+//Criar as listas
+void criarListaCategorias(Categoria *cats, int &endIndex);
+void criarListaProdutos(Produto *prods, int &endIndex);
+void criarListaIngredientes(Ingrediente *ingredientes, int &endIndex);
+void criarListaClientes(Cliente *clientes, int &endIndex);
+void criarListaGarcom(Garcom *garcons, int &endIndex);
+void criarListaPedido(Pedido *pedidos, int &endIndex);
+void criarListaItensPedidos(ItensPedido *ips, int &endIndex);
+void criarListaConsumoIngredientes(ConsumoIngredientes *cis, int &endIndex);
+void criarListas(Categoria* cats, Produto* prods, Ingrediente* ingredientes, Cliente* clientes, Garcom* garcom,
+    Pedido* pedido, ItensPedido* ips, ConsumoIngredientes* cis, int &endIndexCategoria, int &endIndexProduto, int &endIndexIngredientes ,int &endIndexCliente, int &endIndexGarcom, int &endIndexPedido, int &endIndexIps, int &endIndexCis);
+
+//Metodos de pesquisa binaria find
 Categoria findCategoria(Categoria *cats, int codCategoria, int endIndex);
 Produto findProduto(Produto *produtos, int codProduto, int endIndex);
 Ingrediente findIngrediente(Ingrediente *ingredientes, int codIngrediente, int endIndex);
 Cliente findCliente(Cliente *clientes, int codCliente, int endIndex);
 Garcom findGarcom(Garcom *garcons, int codGarcom, int endIndex);
 Pedido findPedido(Pedido *pedidos, int codPedido, int endIndex);
+void findCisByProdutos(ConsumoIngredientes* cis, int endIndexCis, int codProduto, ConsumoIngredientes *cisRetorno, int &endIndexCisRetorno);
+
+//Exercicio 4
+void removerProduto(Produto* produtos, int &endIndexProdutos, int* codsProdutosExclusão, int endIndexExclusão);
+void telaRemoverProduto(Produto* produtos, int &endIndexProdutos);
+
+//Exercicio 5
+Pedido createPedido(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidos, int endIndexPedidos);
+void inserirPedido(Pedido* pedidos, int endIndexPedido, Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidoResultado, int &endIndexResultado);
+
+//Exercicio 6
+ItensPedido inserirProdutoNoPedido(Pedido pedido, Produto produto, int qtde);
+void incluirItensPedido(ItensPedido *ips, int &endIndexIps, ItensPedido ipIncluir);
+void consumirIngredientes(ConsumoIngredientes &ci, Ingrediente &in, bool &resultado, int qtde);
+void telaInserirProdutoNoPedido(Produto *produtos, int endIndexProduto, Categoria *categorias, int endIndexCategorias, ItensPedido *ips, int &endIndexIps,
+    ConsumoIngredientes *cis, int endIndexCis, Ingrediente *ingredientes, int endIndexIngredientes);
+
+//Exercicios de leituras
+void leitura_categoria(struct Categoria cat[], int &contCAT);
+void leitura_produto(struct Produto prod[], int &contPROD);
+void leitura_ingredientes(struct Ingrediente ing[], int &contING);
+void inclusao_clientes(struct Cliente S[], int contS, struct Clientes T[], int contT, struct Clientes A[], int &contA); //2
+void inclusao_garcom(struct Garcom S[], int contS, struct Garcom T[], int contT, struct Garcom A[], int &contA); //3
 ItensPedido findIps(ItensPedido *ics, int codPedido, int codProduto, int endIndex);
 ItensPedido findCis(ConsumoIngredientes *cis, int codPedido, int codIngrediente, int endIndex);
 void removerProduto(Produto* produtos, int endIndexProdutos, int* codsProdutosExclusão, int endIndexExclusão, Produto* listaFinal, int &contFinal);
@@ -82,37 +108,37 @@ void valorTotal(Pedido pedidos[], int contPedidos, ItensPedido itens[], int cont
 
 
 
+
 int main() {
+    //Declaração das listas
+    Categoria cats[100];
+    Produto prods[100];
+    Ingrediente ingredientes[100];
+    Cliente clientes[100];
+    Garcom garcons[100];
+    Pedido pedidos[100];
+    ItensPedido ips[100];
+    ConsumoIngredientes cis[100];
+    int endIndexCats;
+    int endIndexProdutos;
+    int endIndexIngredientes;
+    int endIndexClientes;
+    int endIndexGarçons;
+    int endIndexPedidos;
+    int endIndexIps;
+    int endIndexCis;
 
-    Categoria cats[1000];
-    Produto prods[1000];
-    Ingrediente ingredientes[1000];
-    Cliente clientes[1000];
-    Garcom garcons[1000];
-    Pedido pedidos[1000];
-    ItensPedido ips[1000];
-    ConsumoIngredientes cis[1000];
-
-    criarListas(cats, prods, ingredientes, clientes, garcons, pedidos, ips, cis);
-
-
-    Produto produstosFinal[1000];
-    int CodParaExclusão[2]{2, 5};
-    int endIndexFinal;
-
-    removerProduto(prods, 6, CodParaExclusão, 1, produstosFinal ,endIndexFinal);
-
-    cout << "Ultimo index: " << endIndexFinal << endl;
-    for (int i = 0; i < endIndexFinal; i++)
-    {
-        cout << produstosFinal[i].descricao << endl;
-    }
+    //Inicialização das listas
+    criarListas(cats, prods, ingredientes, clientes, garcons, pedidos, ips, cis, endIndexCats, endIndexProdutos, endIndexIngredientes,
+        endIndexClientes, endIndexGarçons, endIndexPedidos, endIndexIps, endIndexCis);
 
 
-    return 0;
+    //Testes
+    telaInserirProdutoNoPedido(prods, endIndexProdutos, cats, endIndexCats, ips, endIndexIps, cis, endIndexCis, ingredientes, endIndexIngredientes);
 }
 
-void criarListaCategorias(Categoria* cats)
+//Declaração das listas
+void criarListaCategorias(Categoria* cats, int &endIndex)
 {
     //Inicializar uma lista de categorias
     cats[0].codigo = 1;
@@ -121,9 +147,10 @@ void criarListaCategorias(Categoria* cats)
     cats[1].descricao = "Alimentos";
     cats[2].codigo = 3;
     cats[2].descricao = "Doces";
-}
 
-void criarListaProdutos(Produto* prods)
+    endIndex = 2;
+}
+void criarListaProdutos(Produto* prods, int &endIndex)
 {
     //Inicializar uma lista de produtos
     prods[0].codigo = 1;
@@ -160,9 +187,10 @@ void criarListaProdutos(Produto* prods)
     prods[6].descricao = "Tiramissu";
     prods[6].codigo_categoria = 3;
     prods[6].preco_unitario = 25.50;
-}
 
-void criarListaIngredientes(Ingrediente* ingredientes)
+    endIndex = 6;
+}
+void criarListaIngredientes(Ingrediente* ingredientes, int &endIndex)
 {
     //Inicializar lista de Ingredientes
     ingredientes[0].codigo = 1;
@@ -242,9 +270,10 @@ void criarListaIngredientes(Ingrediente* ingredientes)
     ingredientes[10].estoque_maximo = 15;
     ingredientes[10].preco_unitario = 25.50;
 
-}
+    endIndex = 10;
 
-void criarListaClientes(Cliente* clientes)
+}
+void criarListaClientes(Cliente* clientes, int &endIndex)
 {
     //Inicializar lista de clientes
     clientes[0].codigo = 1;
@@ -255,13 +284,13 @@ void criarListaClientes(Cliente* clientes)
     clientes[1].nome = "Matheus";
     clientes[1].telefone = 88888888888;
 
-    clientes[2].codigo = 1;
+    clientes[2].codigo = 4;
     clientes[2].nome = "Ana";
     clientes[2].telefone = 77777777777;
 
+    endIndex = 2;
 }
-
-void criarListaGarcom(Garcom* garcons)
+void criarListaGarcom(Garcom* garcons, int &endIndex)
 {
     //Inicializar lista de garçons
     garcons[0].codigo = 1;
@@ -269,9 +298,10 @@ void criarListaGarcom(Garcom* garcons)
 
     garcons[1].codigo = 2;
     garcons[1].nome = "Rafaela";
-}
 
-void criarListaPedido(Pedido* pedidos)
+    endIndex = 1;
+}
+void criarListaPedido(Pedido* pedidos, int &endIndex)
 {
     //Inicializar lista de pedidos
     pedidos[0].codigo = 1;
@@ -304,8 +334,11 @@ void criarListaPedido(Pedido* pedidos)
     pedidos[5].codigo_garcom = 1;
     pedidos[5].data = "02/02/2025";
 
+    endIndex = 5;
+
 }
 
+  
 void criarListaItensPedidos(ItensPedido* ips, Pedido* pedidos, Produto* produto)
 {
     //Inicializar lista de itens no pedido
@@ -361,9 +394,11 @@ void criarListaItensPedidos(ItensPedido* ips, Pedido* pedidos, Produto* produto)
     ips[12].codigo_produto = 8;
     ips[12].quantidade = 1;
 
-}
 
-void criarListaConsumoIngredientes(ConsumoIngredientes* cis)
+    endIndex = 12;
+
+}
+void criarListaConsumoIngredientes(ConsumoIngredientes* cis, int &endIndex)
 {
 
     cis[0].codigo_produto = 3;
@@ -387,7 +422,7 @@ void criarListaConsumoIngredientes(ConsumoIngredientes* cis)
     cis[4].quantidade_necessaria = 1;
 
     cis[5].codigo_produto = 5;
-    cis[5].codigo_ingrediente = 11;
+    cis[5].codigo_ingrediente = 3;
     cis[5].quantidade_necessaria = 1;
 
     cis[6].codigo_produto = 5;
@@ -395,7 +430,7 @@ void criarListaConsumoIngredientes(ConsumoIngredientes* cis)
     cis[6].quantidade_necessaria = 1;
 
     cis[7].codigo_produto = 5;
-    cis[7].codigo_ingrediente = 3;
+    cis[7].codigo_ingrediente = 11;
     cis[7].quantidade_necessaria = 2;
 
     cis[8].codigo_produto = 6;
@@ -407,11 +442,11 @@ void criarListaConsumoIngredientes(ConsumoIngredientes* cis)
     cis[9].quantidade_necessaria = 1;
 
     cis[10].codigo_produto = 6;
-    cis[10].codigo_ingrediente = 9;
+    cis[10].codigo_ingrediente = 7;
     cis[10].quantidade_necessaria = 1;
 
     cis[11].codigo_produto = 6;
-    cis[11].codigo_ingrediente = 7;
+    cis[11].codigo_ingrediente = 9;
     cis[11].quantidade_necessaria = 1;
 
     cis[12].codigo_produto = 7;
@@ -426,25 +461,23 @@ void criarListaConsumoIngredientes(ConsumoIngredientes* cis)
     cis[13].codigo_ingrediente = 5;
     cis[13].quantidade_necessaria = 1;
 
+    endIndex = 13;
 }
-
 void criarListas(Categoria* cats, Produto* prods, Ingrediente* ingredientes, Cliente* clientes, Garcom* garcom,
-    Pedido* pedido, ItensPedido* ips, ConsumoIngredientes* cis)
+    Pedido* pedido, ItensPedido* ips, ConsumoIngredientes* cis, int &endIndexCategoria, int &endIndexProduto,
+    int &endIndexIngredientes ,int &endIndexCliente, int &endIndexGarcom, int &endIndexPedido, int &endIndexIps, int &endIndexCis)
 {
-    criarListaCategorias(cats);
-    criarListaProdutos(prods);
-    criarListaIngredientes(ingredientes);
-    criarListaClientes(clientes);
-    criarListaGarcom(garcom);
-    criarListaPedido(pedido);
-    criarListaItensPedidos(ips);
-    criarListaConsumoIngredientes(cis);
+    criarListaCategorias(cats, endIndexCategoria);
+    criarListaProdutos(prods, endIndexProduto);
+    criarListaIngredientes(ingredientes, endIndexIngredientes);
+    criarListaClientes(clientes, endIndexCliente);
+    criarListaGarcom(garcom, endIndexGarcom);
+    criarListaPedido(pedido, endIndexPedido);
+    criarListaItensPedidos(ips, endIndexIps);
+    criarListaConsumoIngredientes(cis, endIndexCis);
 }
 
-int contListaProduto(Produto* produtos)
-{
-}
-
+//Metodos "FIND" das struct, construídos com uma pesquisa binaria.
 Categoria findCategoria(Categoria* cats, int codCategoria, int endIndex)
 {
     //Função realiza uma pesquisa binaria para encontrar o categoria
@@ -468,7 +501,6 @@ Categoria findCategoria(Categoria* cats, int codCategoria, int endIndex)
     Categoria resultado = cats[meio];
     return resultado;
 }
-
 Produto findProduto(Produto* produtos, int codProduto, int endIndex)
 {
     //Função realiza uma pesquisa binaria para encontrar o produto
@@ -494,7 +526,6 @@ Produto findProduto(Produto* produtos, int codProduto, int endIndex)
     Produto resultado = produtos[meio];
     return resultado;
 }
-
 Ingrediente findIngrediente(Ingrediente* ingredientes, int codIngrediente, int endIndex)
 {
     //Função realiza uma pesquisa binaria para encontrar o ingrediente
@@ -519,7 +550,6 @@ Ingrediente findIngrediente(Ingrediente* ingredientes, int codIngrediente, int e
     Ingrediente resultado = ingredientes[meio];
     return resultado;
 }
-
 Cliente findCliente(Cliente* clientes, int codCliente, int endIndex)
 {
     //Função realiza uma pesquisa binaria para encontrar o cliente
@@ -544,7 +574,6 @@ Cliente findCliente(Cliente* clientes, int codCliente, int endIndex)
     Cliente resultado = clientes[meio];
     return resultado;
 }
-
 Garcom findGarcom(Garcom* garcons, int codGarcom, int endIndex)
 {
     //Função realiza uma pesquisa binaria para encontrar o garçom
@@ -569,7 +598,6 @@ Garcom findGarcom(Garcom* garcons, int codGarcom, int endIndex)
     Garcom resultado = garcons[meio];
     return resultado;
 }
-
 Pedido findPedido(Pedido* pedidos, int codPedido, int endIndex)
 {
     //Função realiza uma pesquisa binaria para encontrar o pedido
@@ -595,19 +623,44 @@ Pedido findPedido(Pedido* pedidos, int codPedido, int endIndex)
     return resultado;
 }
 
+void findCisByProdutos(ConsumoIngredientes* cis, int endIndexCis, int codProduto, ConsumoIngredientes *cisRetorno, int &endIndexCisRetorno)
+{
+    //Esse é um metodo find incremental, por que a cada find ele aumenta o tamanho da lista de consumo de ingredientes que ela recebe como cisRetorno
+    if (cisRetorno[endIndexCisRetorno].codigo_ingrediente != 0)
+    {
+        //Esse teste é necessario para não comer elementos na segunda passagem do find
+        endIndexCisRetorno++;
+    }
+    for (int i = 0; i<=endIndexCis || cis[i].codigo_produto <= codProduto; i++)
+    {
+        if (cis[i].codigo_produto == codProduto)
+        {
+            cisRetorno[endIndexCisRetorno] = cis[i];
+            endIndexCisRetorno++;
+        }
+    }
+    endIndexCisRetorno = endIndexCisRetorno - 1;
+}
+
+
 ItensPedido findIps(ItensPedido* ics, int codPedido, int endIndex){
 
 }
 
 ItensPedido findCis(ConsumoIngredientes* cis, int codPedido, int codIngrediente, int endIndex){
+
 }
 
-void removerProduto(Produto* produtos, int endIndexProdutos, int* codsProdutosExclusão, int endIndexExclusão, Produto* listaFinal, int &contFinal){
+//Exercicio 4 - Escreva uma função para permitir a exclusão de registros da tabela de Produtos.
+void removerProduto(Produto* produtos, int &endIndexProdutos, int* codsProdutosExclusão, int endIndexExclusão)
+{
+    Produto listaFinal[100];
+    int endIndexFinal = 0;
     int i = 0;
     int j = 0;
     int k = 0;
-
-    for (; j < endIndexExclusão || i <= endIndexProdutos; i++)
+  
+    for (; j <= endIndexExclusão || i <= endIndexProdutos; i++)
     {
         if (produtos[i].codigo != codsProdutosExclusão[j])
         {
@@ -619,7 +672,283 @@ void removerProduto(Produto* produtos, int endIndexProdutos, int* codsProdutosEx
             j++;
         }
     }
-    contFinal = k;
+    endIndexFinal = k-1;
+
+    for (int u = 0 ; u <= endIndexFinal; u++)
+    {
+        produtos[u] = listaFinal[u];
+    }
+    endIndexProdutos = endIndexFinal;
+}
+void telaRemoverProduto(Produto* produtos, int& endIndexProdutos)
+{
+    char confirmar = 'S';
+    int codsProdutoParaExclusao[100];
+    int endIndexExclusao = 0;
+
+    do
+    {
+
+        cout << "\nDigite qual o codigo do produto que vai ser excluido: ";
+        cin >> codsProdutoParaExclusao[endIndexExclusao];
+        endIndexExclusao++;
+        cout << "\nDeseja excluir outro produto [S/N]: ";
+        cin >> confirmar;
+    }while (confirmar == 'S' || confirmar == 's');
+
+    removerProduto(produtos, endIndexProdutos, codsProdutoParaExclusao, --endIndexExclusao);
+
+    cout << "\n<=====================NOVA LISTA DE PRODUTOS=====================>" << endl;
+    for (int i = 0; i <= endIndexProdutos; i++)
+    {
+        cout << produtos[i].codigo<< ". "<< produtos[i].descricao << endl;
+    }
+}
+
+//Exercicio 5 - Escreva uma função para permitir o registro de um novo Pedido.
+// 5.1) Quando o usuário digitar o código do cliente, o programa deverá buscar este código na tabela de Clientes e exibir o nome do cliente.
+// 5.2) Quando o usuário digitar o código do garçom, o programa deverá buscar este código na tabela de Garçons e exibir o nome do garçom.
+// 5.3) O programa deverá permitir a inclusão de um único produto para cada pedido, conforme orientações do item 6.
+Pedido createPedido(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidos, int endIndexPedidos)
+{
+    int idCliente = 0;
+    int idGarcom = 0;
+    Cliente c;
+    Garcom g;
+    Pedido p;
+
+    cout << "\n<=====Adicionar novo pedido=====>" << endl;
+
+    cout << "\n\nDigite o codigo do pedido: ";
+    cin >> p.codigo;
+    Pedido p2 = findPedido(pedidos, p.codigo, endIndexPedidos);
+
+    if (p2.codigo == p.codigo)
+    {
+        cout << "\n\nCodigo repetido;" << endl;
+    }
+    else
+    {
+        cout << "\nDigite o codigo do Cliente: ";
+        cin >> idCliente;
+        c = findCliente(clientes, idCliente,endIndexCLiente);
+        cout << "\n\nNome do cliente: " << c.nome << endl;
+        cout << "\nDigite o codigo do Garçom: ";
+        cin >> idGarcom;
+        g = findGarcom(garcons, idGarcom, endIndexGarcom);
+        cout << "\n\nNome do garçom: " << g.nome << endl;
+        cout <<"\n\nDigite a data[dd/mm/yyyy]: ";
+        cin >> p.data;
+        p.codigo_cliente = c.codigo;
+        p.codigo_garcom = g.codigo;
+
+        return p;
+    }
+}
+void inserirPedido(Pedido* pedidos, int endIndexPedido, Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidoResultado, int &endIndexResultado)
+{
+    char confirma = 'S';
+    do
+    {
+        Pedido p = createPedido(clientes, endIndexCLiente, garcons, endIndexGarcom, pedidos, endIndexPedido);
+
+        for (int i = 0; i < endIndexPedido; i++)
+        {
+            if (p.codigo > pedidos[i].codigo)
+            {
+                pedidoResultado[i] = pedidos[i];
+                endIndexResultado++;
+            }
+            if (p.codigo < pedidos[i].codigo)
+            {
+                pedidoResultado[i] = p;
+                endIndexResultado++;
+            }
+        }
+
+        cout << "\n\nPedido Adicionado!!!";
+        cout << "\nDeseja adicionar outro pedido?[S/N]: ";
+        cin >> confirma;
+    } while (confirma == 'S' || confirma == 's');
+}
+
+//Exercicio 6 - Escreva uma função para permitir a inclusão de produtos em um pedido.
+//6.1) Quando o usuário digitar o código do produto, o programa deverá buscar este código na tabela de Produtos e exibir a descrição e o preço unitário.
+//6.2) Para cada produto selecionado, o programa deverá verificar na estrutura de Consumo de Ingredientes quais ingredientes são necessários.
+//6.3) Para cada ingrediente necessário:
+//     Mostrar a descrição do ingrediente
+//     Verificar se a quantidade em estoque é suficiente
+//     O programa não deverá permitir a inclusão do item caso algum ingrediente não tenha quantidade suficiente
+//6.4) Caso seja possível preparar o produto, o programa deverá subtrair do estoque a quantidade necessária de cada ingrediente
+ItensPedido inserirProdutoNoPedido(int pedido, int produto, int qtde)
+{
+    ItensPedido i;
+    i.codigo_pedido = pedido;
+    i.codigo_produto = produto;
+    i.quantidade = qtde;
+
+    return i;
+}
+void incluirItensPedido(ItensPedido* ips, int &endIndexIps, ItensPedido ipIncluir)
+{
+    ItensPedido ips2[100];
+    int i = 0;
+    int k = 0;
+    int j = 0;
+
+    for (; j <= endIndexIps && k == 0; i++)
+    {
+        if (ips[j].codigo_pedido < ipIncluir.codigo_pedido)
+        {
+            ips2[i].codigo_pedido = ips[j].codigo_pedido;
+            ips2[i].codigo_produto = ips[j].codigo_produto;
+            ips2[i].quantidade = ips[j].quantidade;
+            j++;
+        }
+        else if (ips[j].codigo_pedido > ipIncluir.codigo_pedido)
+        {
+            ips2[i].codigo_produto = ipIncluir.codigo_produto;
+            ips2[i].codigo_pedido = ipIncluir.codigo_pedido;
+            ips2[i].quantidade = ipIncluir.quantidade;
+
+            k++;
+        }
+        else
+        {
+            if (ips[j].codigo_produto < ipIncluir.codigo_produto)
+            {
+                ips2[i].codigo_pedido = ips[j].codigo_pedido;
+                ips2[i].codigo_produto = ips[j].codigo_produto;
+                ips2[i].quantidade = ips[j].quantidade;
+                j++;
+            }
+            else
+            {
+                ips2[i].codigo_produto = ipIncluir.codigo_produto;
+                ips2[i].codigo_pedido = ipIncluir.codigo_pedido;
+                ips2[i].quantidade = ipIncluir.quantidade;
+                k++;
+            }
+        }
+
+    }
+    while (j <= endIndexIps)
+    {
+        ips2[i].codigo_pedido = ips[j].codigo_pedido;
+        ips2[i].codigo_produto = ips[j].codigo_produto;
+        ips2[i].quantidade = ips[j].quantidade;
+        i++;
+        j++;
+    }
+    while (k == 0)
+    {
+        ips2[i].codigo_produto = ipIncluir.codigo_produto;
+        ips2[i].codigo_pedido = ipIncluir.codigo_pedido;
+        ips2[i].quantidade = ipIncluir.quantidade;
+        i++;
+        j++;
+    }
+
+    endIndexIps++;
+    for (int u = 0; u <= endIndexIps; u++)
+    {
+        ips[u] = ips2[u];
+    }
+}
+void consumirIngredientes(ConsumoIngredientes &ci, Ingrediente &in, bool &resultado, int qtde)
+{
+    int quantConsumida = (ci.quantidade_necessaria * qtde);
+
+    if (quantConsumida > in.quant_estoque)
+    {
+        cout << "Você não possui estoque suficiente nesse ingrediente." << endl;
+        resultado = false;
+    }
+    else if ((in.quant_estoque - quantConsumida) <= in.estoque_minimo)
+    {
+        cout << "ATEÇÃO! Ingrediente abaixo do estoque minimo." << endl;
+        in.quant_estoque = in.quant_estoque - quantConsumida;
+    }
+    else
+    {
+        in.quant_estoque = in.quant_estoque - quantConsumida;
+    }
+
+}
+void telaInserirProdutoNoPedido(Produto *produtos, int endIndexProduto, Categoria *categorias, int endIndexCategorias, ItensPedido *ips, int &endIndexIps,
+    ConsumoIngredientes *cis, int endIndexCis, Ingrediente *ingredientes, int endIndexIngredientes)
+{
+    Produto produtoIncluido;
+    ItensPedido i;
+    char confirma = 'S';
+    int codPedido = 0;
+    int codProduto = 0;
+
+    do
+    {
+        int qtde = 0;
+
+        cout << "\n\nDigite o codigo do Pedido: ";
+        cin >> codPedido;
+        cout << "\n\nDigite o codigo do Produto: ";
+        cin >> codProduto;
+
+        Produto p = findProduto(produtos, codProduto, endIndexProduto);
+
+        cout << "\n\n<===========================Produto Adicionado===========================>\n";
+        cout << "Codigo do produto: " <<p.codigo << endl;
+        cout << "Nome do produto: " <<p.descricao << endl;
+
+        Categoria c = findCategoria(categorias, p.codigo_categoria ,endIndexCategorias);
+
+        cout << "Categoria: " << c.descricao  << endl;
+        cout << "Valor: " << p.preco_unitario<< endl;
+
+        cout << "\n\nDigite a quantidade de produtos no pedido: ";
+        cin >> qtde;
+
+
+        cout << "\n\n<===========================Ingrediente Adicionado===========================>\n\n";
+
+        ConsumoIngredientes cisRetorno[100];
+        int endIndexCisRetorno = 0;
+
+        findCisByProdutos(cis, endIndexCis, p.codigo ,cisRetorno, endIndexCisRetorno);
+
+        bool resultado = true;
+        int j = 0;
+        for (int u = 0; u <= endIndexIngredientes && resultado != false; u++)
+        {
+            if (ingredientes[u].codigo == cisRetorno[j].codigo_ingrediente)
+            {
+                cout << "Ingrediente Consumido: " << ingredientes[u].descricao << endl;
+                cout << "Estoque do ingrediente: "<< ingredientes[u].quant_estoque << endl;
+                cout << "Quantidade consumida: "<<cisRetorno[j].quantidade_necessaria * qtde << endl;
+
+                consumirIngredientes(cisRetorno[j], ingredientes[u], resultado, qtde);
+
+
+
+                if (resultado == false)
+                {
+                    cout << "\nTente outro produto\n\n" << endl;
+                }
+                else
+                {
+                    cout << "\n\nProduto adicionado com sucesso" << endl;
+                    i = inserirProdutoNoPedido(codPedido, codProduto, qtde);
+                    incluirItensPedido(ips, endIndexIps, i);
+                }
+                j++;
+
+                cout << "Estoque Final: " << ingredientes[u].quant_estoque << endl;
+            }
+        }
+
+
+        cout << "\n\nDeseja adicionar outro produto a um pedido[S/N]: ";
+        cin >> confirma;
+    }while (confirma == 'S' || confirma == 's');
 }
 
 
@@ -746,6 +1075,7 @@ void lerGarcom(struct Garcom garcom[], int &contGARCOM) {
     }
     contGARCOM = i - 1;
 }
+
 
 //2. Escreva uma função para permitir a inclusão de novos registros na tabela de Clientes.
 void incluirCliente(struct Cliente S[], int contS, struct Cliente T[], int contT, struct Cliente A[], int &contA) {
