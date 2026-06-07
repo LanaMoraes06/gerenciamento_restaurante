@@ -74,7 +74,8 @@ void telaRemoverProduto(Produto* produtos, int &endIndexProdutos);
 
 //Exercicio 5
 Pedido createPedido(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidos, int endIndexPedidos);
-void inserirPedido(Pedido* pedidos, int endIndexPedido, Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidoResultado, int &endIndexResultado);
+void inserirPedido(Pedido* pedidos, int endIndexPedido, Pedido *pedidoResultado, int &endIndexResultado, Pedido p);
+void telaCreatePedido(Pedido* pedidos, int &endIndexPedido, Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom);
 
 //Exercicio 6
 ItensPedido inserirProdutoNoPedido(Pedido pedido, Produto produto, int qtde);
@@ -106,8 +107,10 @@ void consultarIngrediente(struct Ingrediente S[], int constS);
 void exibirMinimo(struct Ingrediente S[], int contS);
 void valorTotal(Pedido pedidos[], int contPedidos, ItensPedido itens[], int contItens, Produto produtos[], int contProdutos);
 
-
-
+void menuPrincipal(Categoria* cats, Produto* prods, Ingrediente* ingredientes, Cliente* clientes, Garcom* garcom,
+    Pedido* pedido, ItensPedido* ips, ConsumoIngredientes* cis, int &endIndexCategoria, int &endIndexProduto,
+    int &endIndexIngredientes ,int &endIndexCliente, int &endIndexGarcom, int &endIndexPedido, int &endIndexIps, int &endIndexCis);
+void centralPedidos(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidos, int endIndexPedidos);
 
 int main() {
     //Declaração das listas
@@ -134,7 +137,8 @@ int main() {
 
 
     //Testes
-    telaInserirProdutoNoPedido(prods, endIndexProdutos, cats, endIndexCats, ips, endIndexIps, cis, endIndexCis, ingredientes, endIndexIngredientes);
+    menuPrincipal(cats, prods, ingredientes, clientes, garcons, pedidos, ips, cis, endIndexCats, endIndexProdutos, endIndexIngredientes,
+        endIndexClientes, endIndexGarçons, endIndexPedidos, endIndexIps, endIndexCis);
 }
 
 //Declaração das listas
@@ -337,9 +341,7 @@ void criarListaPedido(Pedido* pedidos, int &endIndex)
     endIndex = 5;
 
 }
-
-  
-void criarListaItensPedidos(ItensPedido* ips, Pedido* pedidos, Produto* produto)
+void criarListaItensPedidos(ItensPedido *ips, int &endIndex)
 {
     //Inicializar lista de itens no pedido
     ips[0].codigo_pedido = 0;
@@ -622,7 +624,6 @@ Pedido findPedido(Pedido* pedidos, int codPedido, int endIndex)
     Pedido resultado = pedidos[meio];
     return resultado;
 }
-
 void findCisByProdutos(ConsumoIngredientes* cis, int endIndexCis, int codProduto, ConsumoIngredientes *cisRetorno, int &endIndexCisRetorno)
 {
     //Esse é um metodo find incremental, por que a cada find ele aumenta o tamanho da lista de consumo de ingredientes que ela recebe como cisRetorno
@@ -640,15 +641,6 @@ void findCisByProdutos(ConsumoIngredientes* cis, int endIndexCis, int codProduto
         }
     }
     endIndexCisRetorno = endIndexCisRetorno - 1;
-}
-
-
-ItensPedido findIps(ItensPedido* ics, int codPedido, int endIndex){
-
-}
-
-ItensPedido findCis(ConsumoIngredientes* cis, int codPedido, int codIngrediente, int endIndex){
-
 }
 
 //Exercicio 4 - Escreva uma função para permitir a exclusão de registros da tabela de Produtos.
@@ -717,15 +709,14 @@ Pedido createPedido(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int
     Garcom g;
     Pedido p;
 
-    cout << "\n<=====Adicionar novo pedido=====>" << endl;
-
     cout << "\n\nDigite o codigo do pedido: ";
     cin >> p.codigo;
     Pedido p2 = findPedido(pedidos, p.codigo, endIndexPedidos);
 
     if (p2.codigo == p.codigo)
     {
-        cout << "\n\nCodigo repetido;" << endl;
+        cout << "\n\nCodigo repetido, tente novamente" << endl;
+        p = createPedido(clientes, endIndexCLiente, garcons, endIndexGarcom, pedidos, endIndexPedidos);
     }
     else
     {
@@ -745,32 +736,85 @@ Pedido createPedido(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int
         return p;
     }
 }
-void inserirPedido(Pedido* pedidos, int endIndexPedido, Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidoResultado, int &endIndexResultado)
+void inserirPedido(Pedido* pedidos, int endIndexPedido, Pedido *pedidoResultado, int &endIndexResultado, Pedido p)
 {
+
+    int i = 0;
+    int j = 0;
+    int k = 0;
+
+    for (; i <= endIndexPedido && k == 0; i++)
+    {
+        if (p.codigo > pedidos[j].codigo)
+        {
+            pedidoResultado[i] = pedidos[j];
+            j++;
+
+        }
+        if (p.codigo < pedidos[i].codigo)
+        {
+            pedidoResultado[i] = p;
+            k++;
+        }
+    }
+    while (j <= endIndexPedido)
+    {
+        pedidoResultado[i] = pedidos[j];
+        i++;
+        j++;
+    }
+    while (k == 0)
+    {
+        pedidoResultado[i] = p;
+        i++;
+        k++;
+    }
+
+    endIndexResultado = --i;
+    cout << "\n\nPedido Adicionado!";
+}
+void telaCreatePedido(Pedido* pedidos, int &endIndexPedido, Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom)
+{
+    Pedido pedidoResultado[100];
+    int endIndexResultado = 0;
     char confirma = 'S';
+
+    for (int i = 0; i <= endIndexPedido; i++)
+    {
+        cout << "Cod pedido: " << pedidos[i].codigo << endl;
+        cout << "Cod cliente: " << pedidos[i].codigo_cliente << endl;
+        cout << "Cod Garçom: " << pedidos[i].codigo_garcom << endl;
+    }
+
     do
     {
+        cout <<"\n<===========Adicionar novo pedido============>" << endl;
+
         Pedido p = createPedido(clientes, endIndexCLiente, garcons, endIndexGarcom, pedidos, endIndexPedido);
+        inserirPedido(pedidos, endIndexPedido, pedidoResultado, endIndexResultado, p);
 
-        for (int i = 0; i < endIndexPedido; i++)
+        for (int i = 0; i <= endIndexResultado; i++)
         {
-            if (p.codigo > pedidos[i].codigo)
-            {
-                pedidoResultado[i] = pedidos[i];
-                endIndexResultado++;
-            }
-            if (p.codigo < pedidos[i].codigo)
-            {
-                pedidoResultado[i] = p;
-                endIndexResultado++;
-            }
+            pedidos[i] = pedidoResultado[i];
         }
+        endIndexPedido = endIndexResultado;
 
-        cout << "\n\nPedido Adicionado!!!";
-        cout << "\nDeseja adicionar outro pedido?[S/N]: ";
+
+        cout << "Deseja adicionar um novo pedido?[S/N]" << endl;
         cin >> confirma;
-    } while (confirma == 'S' || confirma == 's');
+
+
+    }while (confirma == 'S' || confirma == 's');
+
+
+    for (int i = 0; i <= endIndexPedido; i++)
+    {
+        cout << "Cod pedido: " << pedidos[i].codigo << endl;
+        cout << "Cod cliente: " << pedidos[i].codigo_cliente << endl;
+        cout << "Cod Garçom: " << pedidos[i].codigo_garcom << endl;
+    }
 }
+
 
 //Exercicio 6 - Escreva uma função para permitir a inclusão de produtos em um pedido.
 //6.1) Quando o usuário digitar o código do produto, o programa deverá buscar este código na tabela de Produtos e exibir a descrição e o preço unitário.
@@ -846,7 +890,7 @@ void incluirItensPedido(ItensPedido* ips, int &endIndexIps, ItensPedido ipInclui
         ips2[i].codigo_pedido = ipIncluir.codigo_pedido;
         ips2[i].quantidade = ipIncluir.quantidade;
         i++;
-        j++;
+        k++;
     }
 
     endIndexIps++;
@@ -950,10 +994,7 @@ void telaInserirProdutoNoPedido(Produto *produtos, int endIndexProduto, Categori
         cin >> confirma;
     }while (confirma == 'S' || confirma == 's');
 }
-
-
 //1. Escreva funções específicas para a leitura dos dados das estruturas: Categorias, Produtos e Ingredientes.
-//1.1
 void lerCategoria (struct Categoria cat[], int &contCAT){
     int i = 0;
     cout << "-_-_-_- LEITURA CATEGORIA -_-_-_-";
@@ -968,8 +1009,6 @@ void lerCategoria (struct Categoria cat[], int &contCAT){
     }
     contCAT = i-1;
 }
-
-//1.2
 void lerProduto(struct Produto prod[], int &contPROD) {
     int i = 0;
     cout << "-_-_-_- LEITURA PRODUTOS -_-_-_-";
@@ -988,8 +1027,6 @@ void lerProduto(struct Produto prod[], int &contPROD) {
     }
     contPROD = i-1;
 }
-
-//1.3
 void lerIngrediente(struct Ingrediente ing[], int &contING) {
     int i = 0;
     cout << "-_-_-_- LEITURA INGREDIENTES -_-_-_-";
@@ -1012,7 +1049,6 @@ void lerIngrediente(struct Ingrediente ing[], int &contING) {
     }
     contING = i-1;
 }
-
 //Necessário para a verificar se não há repetição
 void lerCliente(struct Cliente cli[], int &contCLI) {
     int i = 0;
@@ -1045,8 +1081,6 @@ void lerCliente(struct Cliente cli[], int &contCLI) {
     }
     contCLI = i - 1;
 }
-
-
 void lerGarcom(struct Garcom garcom[], int &contGARCOM) {
     int i = 0;
     cout << "-_-_-_- LER GARCOM -_-_-_-";
@@ -1075,8 +1109,6 @@ void lerGarcom(struct Garcom garcom[], int &contGARCOM) {
     }
     contGARCOM = i - 1;
 }
-
-
 //2. Escreva uma função para permitir a inclusão de novos registros na tabela de Clientes.
 void incluirCliente(struct Cliente S[], int contS, struct Cliente T[], int contT, struct Cliente A[], int &contA) {
     int i = 0, j = 0, k = 0;
@@ -1150,7 +1182,6 @@ void incluirCategoria(struct Categoria S[], int contS, struct Categoria T[], int
     }
     contA = k;
 }
-
 void incluirProduto(struct Produto S[], int contS, struct Produto T[], int contT, struct Produto A[], int &contA) {
     int i = 0, j = 0, k = 0;
     for (;i < contS && j < contT;k++){
@@ -1194,7 +1225,6 @@ void incluirProduto(struct Produto S[], int contS, struct Produto T[], int contT
     }
     contA = k;
 }
-
 void incluirIngredientes(struct Ingrediente S[], int contS, struct Ingrediente T[], int contT, struct Ingrediente A[], int &contA) {
     int i = 0, j = 0, k = 0;
     for (;i < contS && j < contT;k++){
@@ -1243,8 +1273,6 @@ void incluirIngredientes(struct Ingrediente S[], int contS, struct Ingrediente T
     }
     contA = k;
 }
-
-
 //3.Escreva uma função para permitir a inclusão de novos registros na tabela de Garçons.
 void incluirGarcom(struct Garcom S[], int contS, struct Garcom T[], int contT, struct Garcom A[], int &contA) {
     int i = 0, j = 0, k = 0;
@@ -1279,7 +1307,6 @@ void incluirGarcom(struct Garcom S[], int contS, struct Garcom T[], int contT, s
     }
     contA = k;
 }
-
 //7. Escreva uma função para permitir ao usuário consultar os dados de determinado ingrediente.
 void consultarIngrediente(struct Ingrediente S[], int tamanho) {
     char resp;
@@ -1311,12 +1338,10 @@ void consultarIngrediente(struct Ingrediente S[], int tamanho) {
 
     } while (resp == 's' || resp == 'S');
 }
-
 //8. Escreva uma função para exibir todos os ingredientes que estejam com a quantidade em estoque abaixo do estoque mínimo.
 //8.1) As seguintes informações devem ser exibidas: Código, Descrição, Quantidade em estoque, Estoque máximo, Quantidade a ser comprada, Valor da compra
 //8.1.1) A quantidade a ser comprada é calculada pela diferença entre o estoque máximo e a quantidade em estoque
 //8.2) Ao final, a função deverá exibir o valor total a ser gasto na reposição de ingredientes
-
 void exibirMinimo(struct Ingrediente S[], int tamanho) {
     double valorTotal = 0;
     for (int i = 0; i < tamanho; i++) {
@@ -1334,11 +1359,9 @@ void exibirMinimo(struct Ingrediente S[], int tamanho) {
     }
     cout << "Valor total da compra R$: " << valorTotal;
 }
-
 //9. Escreva uma função para exibir o valor total arrecadado com todos os pedidos.
 //9.1) O valor de cada pedido deve ser calculado pela soma dos valores de seus itens
 //9.2) O valor de cada item é calculado multiplicando a quantidade pelo preço unitário do produto
-
 void valorTotal(Pedido pedidos[], int contPedidos, ItensPedido itens[], int contItens, Produto produtos[], int contProdutos) {
     double totalGeral = 0;
     cout << "\n--- RELATORIO DE ARRECADACAO ---" << endl;
@@ -1357,4 +1380,82 @@ void valorTotal(Pedido pedidos[], int contPedidos, ItensPedido itens[], int cont
 
     cout << "--------------------------------" << endl;
     cout << "Valor total R$: " << totalGeral << endl;
+}
+//Menus
+void menuPrincipal(Categoria *cats, Produto *prods, Ingrediente *ingredientes, Cliente *clientes, Garcom *garcons,
+    Pedido *pedidos, ItensPedido *ips, ConsumoIngredientes *cis, int &endIndexCategoria, int &endIndexProduto,
+    int &endIndexIngredientes, int &endIndexCliente, int &endIndexGarcom, int &endIndexPedido, int &endIndexIps,
+    int &endIndexCis)
+{
+    int confirma;
+    do
+    {
+        int resposta = 0;
+
+        cout <<"\n<====================Menu====================>" << endl;
+        cout << "\nBem Vindo ao sistema." <<endl;
+        cout << "1. Central de Pedidos" << endl;
+        cout << "2. Central de Produtos" << endl;
+        cout << "3. Central de Clientes" << endl;
+        cout << "4. Central de Garçons" << endl;
+        cout << "5. Central de Ingredientes" << endl;
+        cout << "6. Sair" << endl;
+        cout << "Escolha uma opção: ";
+        cin >> resposta;
+
+        switch (resposta)
+        {
+        case 1:
+            centralPedidos(clientes, endIndexCliente, garcons, endIndexGarcom, pedidos, endIndexPedido);
+            break;
+        case 2:
+            cout <<"\n<============Central de Produtos=============>" << endl;
+            break;
+        case 3:
+            cout <<"\n<============Central de Clientes=============>" << endl;
+            break;
+        case 4:
+            cout <<"\n<============Central de Garçons==============>" << endl;
+            break;
+        case 5:
+            cout <<"\n<==========Central de Ingredientes===========>" << endl;
+            break;
+        case 6:
+            confirma = -1;
+            cout << "Até a próxima" << endl;
+            break;
+        default:
+            cout << "Desculpe, opção incorreta. Tente novamente" << endl;
+        }
+
+    }while (confirma != -1);
+}
+
+void centralPedidos(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidos, int endIndexPedidos)
+{
+    int confirma = 0;
+    do
+    {
+        int resposta = 0;
+
+        cout <<"\n<============Central de Pedidos==============>" << endl;
+        cout << "1. Adicionar novo pedido" << endl;
+        cout << "2. Voltar" << endl;
+        cout << "Escolha uma opção: ";
+        cin >> resposta;
+
+        switch (resposta)
+        {
+            case 1:
+            telaCreatePedido(pedidos, endIndexPedidos, clientes, endIndexCLiente, garcons, endIndexGarcom);
+            break;
+            case 2:
+            confirma = -1;
+            break;
+            default:
+            cout << "Desculpe, opção incorreta. Tente novamente" << endl;
+            break;
+        }
+
+    }while (confirma != -1);
 }
