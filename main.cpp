@@ -93,7 +93,6 @@ void inclusao_clientes(struct Cliente S[], int contS, struct Clientes T[], int c
 void inclusao_garcom(struct Garcom S[], int contS, struct Garcom T[], int contT, struct Garcom A[], int &contA); //3
 ItensPedido findIps(ItensPedido *ics, int codPedido, int codProduto, int endIndex);
 ItensPedido findCis(ConsumoIngredientes *cis, int codPedido, int codIngrediente, int endIndex);
-void removerProduto(Produto* produtos, int endIndexProdutos, int* codsProdutosExclusão, int endIndexExclusão, Produto* listaFinal, int &contFinal);
 void lerCategoria(struct Categoria cat[], int &contCAT);
 void lerProduto(struct Produto prod[], int &contPROD);
 void lerIngrediente(struct Ingrediente ing[], int &contING);
@@ -113,6 +112,7 @@ void menuPrincipal(Categoria* cats, Produto* prods, Ingrediente* ingredientes, C
     int &endIndexIngredientes ,int &endIndexCliente, int &endIndexGarcom, int &endIndexPedido, int &endIndexIps, int &endIndexCis);
 void centralPedidos(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int endIndexGarcom, Pedido *pedidos, int endIndexPedidos, Produto *produtos, int endIndexProduto, Categoria *categorias, int endIndexCategorias, ItensPedido *ips, int &endIndexIps,
     ConsumoIngredientes *cis, int endIndexCis, Ingrediente *ingredientes, int endIndexIngredientes);
+void centralProdutos(Produto* produtos, int &endIndexProdutos);
 
 int main() {
     //Declaração das listas
@@ -1460,7 +1460,7 @@ void menuPrincipal(Categoria *cats, Produto *prods, Ingrediente *ingredientes, C
                 ips, endIndexIps, cis, endIndexCis, ingredientes, endIndexIngredientes);
             break;
         case 2:
-            cout <<"\n<============Central de Produtos=============>" << endl;
+            centralProdutos(prods, endIndexProduto);
             break;
         case 3:
             cout <<"\n<============Central de Clientes=============>" << endl;
@@ -1491,6 +1491,7 @@ void centralPedidos(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int
         int resposta = 0;
 
         cout <<"\n<============Central de Pedidos==============>" << endl;
+
         cout << "1. Adicionar novo pedido" << endl;
         cout << "2. Adicionar produto" << endl;
         cout << "3. Voltar" << endl;
@@ -1503,11 +1504,11 @@ void centralPedidos(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int
             telaCreatePedido(pedidos, endIndexPedidos, clientes, endIndexCLiente, garcons, endIndexGarcom, produtos, endIndexProduto, categorias, endIndexCategorias, ips, endIndexIps,
                 cis, endIndexCis, ingredientes, endIndexIngredientes);
             break;
-        case 2:
+            case 2:
             telaInserirProdutoNoPedido(pedidos, endIndexPedidos, produtos, endIndexProduto, categorias, endIndexCategorias, ips, endIndexIps, cis, endIndexCis,
                 ingredientes, endIndexIngredientes, -1);
             break;
-        case 3:
+            case 3:
             confirma = -1;
             break;
             default:
@@ -1516,4 +1517,41 @@ void centralPedidos(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int
         }
 
     }while (confirma != -1);
+}
+
+void centralProdutos(Produto* produtos, int& endIndexProdutos)
+{
+    int confirma = 0;
+    do
+    {
+        int resposta = -1;
+        cout <<"\n<============Central de Produtos=============>" << endl;
+
+        cout << "1. Adicionar novo produto" << endl;
+        cout << "2. Exibir produto" << endl;
+        cout << "3. Remover produto" << endl;
+        cout << "4. Voltar" << endl;
+        cout << "Escolha uma opção: ";
+        cin >> resposta;
+        switch (resposta)
+        {
+            case 1:
+            cout <<"\n<============Adicionar  Produtos=============>" << endl;
+            break;
+            case 2:
+            cout <<"\n<==============Exibir  Produtos==============>" << endl;
+            break;
+            case 3:
+            telaRemoverProduto(produtos, endIndexProdutos);
+            break;
+            case 4:
+            confirma = -1;
+            break;
+            default:
+            cout << "Desculpe, opção incorreta. Tente novamente" << endl;
+            break;
+        }
+
+    }while (confirma != -1);
+
 }
