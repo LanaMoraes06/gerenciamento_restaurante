@@ -465,10 +465,7 @@ void criarListaConsumoIngredientes(ConsumoIngredientes* cis, int &endIndex) {
     cis[12].codigo_ingrediente = 1;
     cis[12].quantidade_necessaria = 1;
 
-    cis[13].codigo_produto = 7;resp
-resp
-resp
-resp
+    cis[13].codigo_produto = 7;
     cis[13].codigo_ingrediente = 4;
     cis[13].quantidade_necessaria = 1;
 
@@ -1464,4 +1461,3 @@ void telaInserirProdutoNoPedido(Produto *produtos, int endIndexProduto, Categori
 
 // TELA 7 - não precisa, ja tem do-while
 // TELA 8 - Não tem escolha, ele apenas exibe
-
