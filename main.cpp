@@ -82,7 +82,7 @@ void telaCreatePedido(Pedido* pedidos, int &endIndexPedido, Cliente *clientes, i
 ItensPedido inserirProdutoNoPedido(Pedido pedido, Produto produto, int qtde);
 void incluirItensPedido(ItensPedido *ips, int &endIndexIps, ItensPedido ipIncluir);
 void consumirIngredientes(ConsumoIngredientes &ci, Ingrediente &in, bool &resultado, int qtde);
-void telaInserirProdutoNoPedido(Produto *produtos, int endIndexProduto, Categoria *categorias, int endIndexCategorias, ItensPedido *ips, int &endIndexIps,
+void telaInserirProdutoNoPedido(Pedido* pedidos, int &endIndexPedido, Produto *produtos, int endIndexProduto, Categoria *categorias, int endIndexCategorias, ItensPedido *ips, int &endIndexIps,
     ConsumoIngredientes *cis, int endIndexCis, Ingrediente *ingredientes, int endIndexIngredientes, int codPedido);
 
 //Exercicios de leituras
@@ -632,6 +632,13 @@ Pedido findPedido(Pedido* pedidos, int codPedido, int endIndex)
     }
 
     Pedido resultado = pedidos[meio];
+
+    if (pedidos[meio].codigo != codPedido)
+    {
+        resultado.codigo = -1;
+        return resultado;
+    }
+
     return resultado;
 }
 void findCisByProdutos(ConsumoIngredientes* cis, int endIndexCis, int codProduto, ConsumoIngredientes *cisRetorno, int &endIndexCisRetorno)
@@ -811,7 +818,7 @@ void telaCreatePedido(Pedido* pedidos, int &endIndexPedido, Cliente *clientes, i
         }
         endIndexPedido = endIndexResultado;
 
-        telaInserirProdutoNoPedido(produtos, endIndexProduto, categorias, endIndexCategorias, ips, endIndexIps, cis, endIndexCis, ingredientes, endIndexIngredientes, p.codigo);
+        telaInserirProdutoNoPedido(pedidos, endIndexPedido, produtos, endIndexProduto, categorias, endIndexCategorias, ips, endIndexIps, cis, endIndexCis, ingredientes, endIndexIngredientes, p.codigo);
 
         cout << "Deseja adicionar um novo pedido?[S/N]" << endl;
         cin >> confirma;
@@ -932,7 +939,7 @@ void consumirIngredientes(ConsumoIngredientes &ci, Ingrediente &in, bool &result
     }
 
 }
-void telaInserirProdutoNoPedido(Produto *produtos, int endIndexProduto, Categoria *categorias, int endIndexCategorias, ItensPedido *ips, int &endIndexIps,
+void telaInserirProdutoNoPedido(Pedido* pedidos, int &endIndexPedido,Produto *produtos, int endIndexProduto, Categoria *categorias, int endIndexCategorias, ItensPedido *ips, int &endIndexIps,
     ConsumoIngredientes *cis, int endIndexCis, Ingrediente *ingredientes, int endIndexIngredientes, int codPedido)
 {
     Produto produtoIncluido;
@@ -946,10 +953,21 @@ void telaInserirProdutoNoPedido(Produto *produtos, int endIndexProduto, Categori
 
         int qtde = 0;
         Produto p;
+        Pedido p2;
         if (codPedido == -1)
         {
-            cout << "\n\nDigite o codigo do Pedido: ";
-            cin >> codPedido;
+            do
+            {
+                cout << "\n\nDigite o codigo do Pedido: ";
+                cin >> codPedido;
+
+                p2 = findPedido(pedidos, codPedido, endIndexPedido);
+
+                if (p2.codigo == -1)
+                {
+                    cout << "\nCodigo de pedido invalido, tente novamente." << endl;
+                }
+            }while (p2.codigo == -1);
         }
         do
         {
@@ -1474,7 +1492,8 @@ void centralPedidos(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int
 
         cout <<"\n<============Central de Pedidos==============>" << endl;
         cout << "1. Adicionar novo pedido" << endl;
-        cout << "2. Voltar" << endl;
+        cout << "2. Adicionar produto" << endl;
+        cout << "3. Voltar" << endl;
         cout << "Escolha uma opção: ";
         cin >> resposta;
 
@@ -1484,7 +1503,11 @@ void centralPedidos(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int
             telaCreatePedido(pedidos, endIndexPedidos, clientes, endIndexCLiente, garcons, endIndexGarcom, produtos, endIndexProduto, categorias, endIndexCategorias, ips, endIndexIps,
                 cis, endIndexCis, ingredientes, endIndexIngredientes);
             break;
-            case 2:
+        case 2:
+            telaInserirProdutoNoPedido(pedidos, endIndexPedidos, produtos, endIndexProduto, categorias, endIndexCategorias, ips, endIndexIps, cis, endIndexCis,
+                ingredientes, endIndexIngredientes, -1);
+            break;
+        case 3:
             confirma = -1;
             break;
             default:
