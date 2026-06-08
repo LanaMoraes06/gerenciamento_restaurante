@@ -697,6 +697,9 @@ void telaRemoverProduto(Produto* produtos, int& endIndexProdutos)
 
     do
     {
+        system("clear");
+        cout <<"\n<==============Excluir produto===============>" << endl;
+
 
         cout << "\nDigite qual o codigo do produto que vai ser excluido: ";
         cin >> codsProdutoParaExclusao[endIndexExclusao];
@@ -797,6 +800,7 @@ void telaCreatePedido(Pedido* pedidos, int &endIndexPedido, Cliente *clientes, i
     int endIndexResultado = 0;
     char confirma = 'S';
 
+    system("clear");
     for (int i = 0; i <= endIndexPedido; i++)
     {
         cout << "Cod pedido: " << pedidos[i].codigo << endl;
@@ -825,14 +829,6 @@ void telaCreatePedido(Pedido* pedidos, int &endIndexPedido, Cliente *clientes, i
 
 
     }while (confirma == 'S' || confirma == 's');
-
-
-    for (int i = 0; i <= endIndexPedido; i++)
-    {
-        cout << "Cod pedido: " << pedidos[i].codigo << endl;
-        cout << "Cod cliente: " << pedidos[i].codigo_cliente << endl;
-        cout << "Cod Garçom: " << pedidos[i].codigo_garcom << endl;
-    }
 }
 
 
@@ -949,6 +945,7 @@ void telaInserirProdutoNoPedido(Pedido* pedidos, int &endIndexPedido,Produto *pr
 
     do
     {
+        system("clear");
         cout << "\n\n<======================Adicionar Produto ao Pedido=======================>\n";
 
         int qtde = 0;
@@ -1440,6 +1437,7 @@ void menuPrincipal(Categoria *cats, Produto *prods, Ingrediente *ingredientes, C
     int confirma;
     do
     {
+        system("clear");
         int resposta = 0;
 
         cout <<"\n<====================Menu====================>" << endl;
@@ -1488,9 +1486,11 @@ void centralPedidos(Cliente *clientes, int endIndexCLiente, Garcom *garcons, int
     int confirma = 0;
     do
     {
+        system("clear");
         int resposta = 0;
 
         cout <<"\n<============Central de Pedidos==============>" << endl;
+
 
         cout << "1. Adicionar novo pedido" << endl;
         cout << "2. Adicionar produto" << endl;
@@ -1524,6 +1524,7 @@ void centralProdutos(Produto* produtos, int& endIndexProdutos)
     int confirma = 0;
     do
     {
+        system("clear");
         int resposta = -1;
         cout <<"\n<============Central de Produtos=============>" << endl;
 
