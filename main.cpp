@@ -105,7 +105,7 @@ void incluirIngredientes(struct Ingrediente S[], int contS, struct Ingrediente T
 // Exercicio 7, 8 e 9
 void consultarIngrediente(struct Ingrediente S[], int endIndexIngrediente);
 void exibirMinimo(struct Ingrediente S[], int endIndexIngrediente);
-void valorTotal(Pedido pedidos[], int contPedidos, ItensPedido itens[], int contItens, Produto produtos[], int contProdutos);
+void valorTotal(Pedido pedidos[], int endIndexPedidos, ItensPedido itens[], int endIndexIps, Produto produtos[], int endIndexProdutos);
 
 // Telas de Insercao (Master)
 void telaInserirCategoria(Categoria* categoriasPrincipais, int &endIndexCategorias);
@@ -599,16 +599,6 @@ Pedido findPedido(Pedido* pedidos, int codPedido, int endIndex) {
     return resultado;
 }
 
-ItensPedido findIps(ItensPedido* ics, int codPedido, int codProduto, int endIndex) {
-    ItensPedido result = {-1, -1, 0};
-    return result;
-}
-
-ItensPedido findCis(ConsumoIngredientes* cis, int codPedido, int codIngrediente, int endIndex) {
-    ItensPedido result = {-1, -1, 0};
-    return result;
-}
-
 void findCisByProdutos(ConsumoIngredientes* cis, int endIndexCis, int codProduto, ConsumoIngredientes *cisRetorno, int &endIndexCisRetorno) {
     if (endIndexCisRetorno >= 0 && cisRetorno[endIndexCisRetorno].codigo_ingrediente != 0) {
         endIndexCisRetorno++;
@@ -633,21 +623,21 @@ void findCisByProdutos(ConsumoIngredientes* cis, int endIndexCis, int codProduto
 
 // ====================== EXERCICIO 4 ======================
 
-void removerProduto(Produto* produtos, int endIndexProdutos, int* codsProdutosExclusao, int endIndexExclusao, Produto* listaFinal, int &contFinal) {
-    int i = 0;
-    int j = 0;
-    int k = 0;
-
-    for (; j <= endIndexExclusao || i <= endIndexProdutos; i++) {
-        if (produtos[i].codigo != codsProdutosExclusao[j]) {
-            listaFinal[k] = produtos[i];
-            k++;
-        } else {
-            j++;
-        }
-    }
-    contFinal = k - 1;
-}
+// void removerProduto(Produto* produtos, int endIndexProdutos, int* codsProdutosExclusao, int endIndexExclusao, Produto* listaFinal, int &contFinal) {
+//     int i = 0;
+//     int j = 0;
+//     int k = 0;
+//
+//     for (; j <= endIndexExclusao || i <= endIndexProdutos; i++) {
+//         if (produtos[i].codigo != codsProdutosExclusao[j]) {
+//             listaFinal[k] = produtos[i];
+//             k++;
+//         } else {
+//             j++;
+//         }
+//     }
+//     contFinal = k - 1;
+// }
 
 void removerProduto(Produto* produtos, int &endIndexProdutos, int* codsProdutosExclusao, int endIndexExclusao) {
     Produto listaFinal[1000];
@@ -1446,15 +1436,15 @@ void exibirMinimo(struct Ingrediente S[], int endIndexIngrediente) {
     cout << "Valor total da compra R$: " << valorTotal;
 }
 
-void valorTotal(Pedido pedidos[], int contPedidos, ItensPedido itens[], int contItens, Produto produtos[], int contProdutos) {
+void valorTotal(Pedido pedidos[], int endIndexPedidos, ItensPedido itens[], int endIndexIps, Produto produtos[], int endIndexProdutos) {
     double totalGeral = 0;
     cout << "\n--- RELATORIO DE ARRECADACAO ---" << endl;
 
-    for (int i = 0; i < contPedidos; i++) {
+    for (int i = 0; i <= endIndexPedidos; i++) {
         double valorPedido = 0;
-        for (int j = 0; j < contItens; j++) {
+        for (int j = 0; j <= endIndexIps; j++) {
             if (itens[j].codigo_pedido == pedidos[i].codigo) {
-                Produto prod = findProduto(produtos, itens[j].codigo_produto, contProdutos - 1);
+                Produto prod = findProduto(produtos, itens[j].codigo_produto, endIndexProdutos - 1);
                 valorPedido += prod.preco_unitario * itens[j].quantidade;
             }
         }
@@ -1480,7 +1470,7 @@ void exibirCategoria(Categoria categoria[], int &endIndexCategoria) {
 
 void exibirProduto(Produto produto[], int &endIndexProduto) {
     cout << "\n\n<===================== LISTA DE PRODUTOS  =====================>\n";
-    for (int i = 0; i <= endIndexProduto; i++) {
+    for (int i = 0; i <=endIndexProduto; i++) {
         cout << "-----------------------------" << endl;
         cout << "Codigo: " << produto[i].codigo << endl;
         cout << "Descricao: " << produto[i].descricao << endl;
@@ -1725,7 +1715,7 @@ void centralPedidos(Cliente *clientes, int endIndexCliente, Garcom *garcons, int
         cout <<"\n<============Central de Pedidos==============>" << endl;
         cout << "1. Adicionar novo pedido" << endl;
         cout << "2. Adicionar produto a um pedido" << endl;
-        cout << "3. Valor total arrecadado com todos os pedidos" << endl;
+        cout << "3. Valor total de pedidos" << endl;
         cout << "4. Voltar" << endl;
         cout << "Escolha uma opcao: ";
         cin >> resposta;
@@ -1738,7 +1728,8 @@ void centralPedidos(Cliente *clientes, int endIndexCliente, Garcom *garcons, int
                 telaInserirProdutoNoPedido(pedidos, endIndexPedidos, produtos, endIndexProduto, categorias, endIndexCategorias, ips, endIndexIps, cis, endIndexCis, ingredientes, endIndexIngredientes, -1);
                 break;
             case 3:
-                valorTotal(pedidos,endIndexPedidos, ips, endIndexIps, produtos, endIndexProduto);
+                valorTotal(pedidos, endIndexPedidos, ips, endIndexIps, produtos, endIndexProduto);
+                break;
             case 4:
                 confirma = -1;
                 break;
