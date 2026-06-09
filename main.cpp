@@ -89,11 +89,11 @@ void consumirIngredientes(ConsumoIngredientes &ci, Ingrediente &in, bool &result
 void telaInserirProdutoNoPedido(Pedido* pedidos, int &endIndexPedido, Produto *produtos, int endIndexProduto, Categoria *categorias, int endIndexCategorias, ItensPedido *ips, int &endIndexIps, ConsumoIngredientes *cis, int endIndexCis, Ingrediente *ingredientes, int endIndexIngredientes, int codPedido);
 
 // Exercicios de leituras
-void lerCategoria(struct Categoria cat[], int &contCAT);
-void lerProduto(struct Produto prod[], int &contPROD);
-void lerIngrediente(struct Ingrediente ing[], int &contING);
-void lerCliente(struct Cliente cli[], int &contCLI);
-void lerGarcom(struct Garcom garcom[], int &contGARCOM);
+void lerCategoria(struct Categoria cat[], int &contCAT, Categoria principais[], int endIndexPrincipais);
+void lerProduto(struct Produto prod[], int &contPROD, Produto principais[], int endIndexPrincipais);
+void lerIngrediente(struct Ingrediente ing[], int &contING, Ingrediente principais[], int endIndexPrincipais);
+void lerCliente(struct Cliente cli[], int &contCLI, Cliente principais[], int endIndexPrincipais);
+void lerGarcom(struct Garcom garcom[], int &contGARCOM, Garcom principais[], int endIndexPrincipais);
 
 // Inclusao (Merge)
 void incluirCliente(struct Cliente S[], int contS, struct Cliente T[], int contT, struct Cliente A[], int &contA);
@@ -134,7 +134,7 @@ void menuPrincipal(Categoria* cats, Produto* prods, Ingrediente* ingredientes, C
     int &endIndexIngredientes ,int &endIndexCliente, int &endIndexGarcom, int &endIndexPedido, int &endIndexIps, int &endIndexCis);
 
 
-// ================== MAIN ==================
+// ================== 3 ==================
 
 int main() {
     Categoria cats[1000];
@@ -676,19 +676,31 @@ void telaRemoverProduto(Produto* produtos, int& endIndexProdutos) {
     char confirmar = 'S';
     int codsProdutoParaExclusao[100];
     int endIndexExclusao = 0;
+    char confirmarExclusao = 'N';
 
     do {
         system("clear");
         cout <<"\n<==============Excluir produto===============>" << endl;
+        for (int i = 0; i <= endIndexProdutos; i++) {
+            cout << produtos[i].codigo << " - " << produtos[i].descricao <<endl;
+        }
 
         cout << "\nDigite qual o codigo do produto que vai ser excluido: ";
         cin >> codsProdutoParaExclusao[endIndexExclusao];
-        endIndexExclusao++;
+        cout << "\nTem certeza que deseja excluir esse produto [S/N]";
+        cin >> confirmarExclusao;
+        if (confirmarExclusao == 'S' || confirmarExclusao == 's') {
+            cout << "\nProduto excluido com sucesso!" << endl;
+            endIndexExclusao++;
+            removerProduto(produtos, endIndexProdutos, codsProdutoParaExclusao, --endIndexExclusao);
+
+        } else {
+            cout << "\nNenhum item excluido!" << endl;
+        }
         cout << "\nDeseja excluir outro produto [S/N]: ";
         cin >> confirmar;
     } while (confirmar == 'S' || confirmar == 's');
 
-    removerProduto(produtos, endIndexProdutos, codsProdutoParaExclusao, --endIndexExclusao);
 
     cout << "\n<=====================NOVA LISTA DE PRODUTOS=====================>" << endl;
     for (int i = 0; i <= endIndexProdutos; i++) {
@@ -963,78 +975,162 @@ void telaInserirProdutoNoPedido(Pedido* pedidos, int &endIndexPedido,Produto *pr
 
 // ====================== METODOS DE LEITURA ======================
 
-void lerCategoria (struct Categoria cat[], int &contCAT){
+void lerCategoria(struct Categoria cat[], int &contCAT, Categoria principais[], int endIndexPrincipais) {
     int i = 0;
+    int saida = 1;
     cout << "-_-_-_- LEITURA CATEGORIA -_-_-_-";
-    for (int saida = 1; i < 1000 && saida != 0; i++){
-        cout << "\n\nCodigo da Categoria " << (i+1) << ": ";
-        cin >> cat[i].codigo;
-        if (cat[i].codigo > 0){
-            cout << "Descricao: ";
-            getline(cin >> ws, cat[i].descricao);
-        }
-        else saida = 0;
-    }
-    contCAT = i-1;
-}
 
-void lerProduto(struct Produto prod[], int &contPROD) {
-    int i = 0;
-    cout << "-_-_-_- LEITURA PRODUTOS -_-_-_-";
-    for (int saida = 1; i < 1000 && saida != 0; i++) {
-        cout << "\n\nCodigo do Produto " << (i+1) << ": ";
-        cin >> prod[i].codigo;
-        if (prod[i].codigo > 0) {
-            cout << "Descricao: ";
-            getline(cin >> ws, prod[i].descricao);
-            cout << "Codigo categoria: ";
-            cin >> prod[i].codigo_categoria;
-            cout << "Preco unitario R$: ";
-            cin >> prod[i].preco_unitario;
-        }
-        else saida = 0;
-    }
-    contPROD = i-1;
-}
-
-void lerIngrediente(struct Ingrediente ing[], int &contING) {
-    int i = 0;
-    cout << "-_-_-_- LEITURA INGREDIENTES -_-_-_-";
-    for (int saida = 1; i < 1000 && saida != 0; i++) {
-        cout << "Codigo do Ingrediente " << (i+1) << ": ";
-        cin >> ing[i].codigo;
-        if (ing[i].codigo > 0) {
-            cout << "Descricao: ";
-            getline(cin >> ws, ing[i].descricao);
-            cout << "Quantidade estoque: ";
-            cin >> ing[i].quant_estoque;
-            cout << "Estoque minimo: ";
-            cin >> ing[i].estoque_minimo;
-            cout << "Estoque maximo: ";
-            cin >> ing[i].estoque_maximo;
-            cout << "Preco unitario R$: ";
-            cin >> ing[i].preco_unitario;
-        }
-        else saida = 0;
-    }
-    contING = i-1;
-}
-
-void lerCliente(struct Cliente cli[], int &contCLI) {
-    int i = 0;
-    cout << "-_-_-_- LER CLIENTE -_-_-_-";
-    for (int saida = 1; i < 1000 && saida != 0; i++) {
+    while (i < 1000 && saida != 0) {
         int tempCodigo;
-        cout << "\nCodigo do Cliente " << (i + 1) << " (Digite 0 para sair): ";
+        cout << "\nCodigo da Categoria (Digite 0 para sair): ";
         cin >> tempCodigo;
+
         if (tempCodigo > 0) {
             bool existe = false;
+            for (int j = 0; j < i; j++) {
+                if (cat[j].codigo == tempCodigo) {
+                    existe = true;
+                    break;
+                }
+            }
+            for (int j = 0; j <= endIndexPrincipais; j++) {
+                if (principais[j].codigo == tempCodigo) {
+                    existe = true;
+                    break;
+                }
+            }
+
+            if (!existe) {
+                cat[i].codigo = tempCodigo;
+                cout << "Descricao: ";
+                getline(cin >> ws, cat[i].descricao);
+                i++;
+            } else {
+                cout << "Erro: Esse codigo ja esta cadastrado no sistema!\n";
+            }
+        } else {
+            saida = 0;
+        }
+    }
+    contCAT = i - 1;
+}
+void lerProduto(struct Produto prod[], int &contPROD, Produto principais[], int endIndexPrincipais) {
+    int i = 0;
+    int saida = 1;
+    cout << "-_-_-_- LEITURA PRODUTOS -_-_-_-";
+
+    while (i < 1000 && saida != 0) {
+        int tempCodigo;
+        cout << "\nCodigo do Produto (Digite 0 para sair): ";
+        cin >> tempCodigo;
+
+        if (tempCodigo > 0) {
+            bool existe = false;
+            for (int j = 0; j < i; j++) {
+                if (prod[j].codigo == tempCodigo) {
+                    existe = true;
+                    break;
+                }
+            }
+            for (int j = 0; j <= endIndexPrincipais; j++) {
+                if (principais[j].codigo == tempCodigo) {
+                    existe = true;
+                    break;
+                }
+            }
+
+            if (!existe) {
+                prod[i].codigo = tempCodigo;
+                cout << "Descricao: ";
+                getline(cin >> ws, prod[i].descricao);
+                cout << "Codigo categoria: ";
+                cin >> prod[i].codigo_categoria;
+                cout << "Preco unitario R$: ";
+                cin >> prod[i].preco_unitario;
+                i++;
+            } else {
+                cout << "Erro: Esse codigo ja esta cadastrado no sistema!\n";
+            }
+        } else {
+            saida = 0;
+        }
+    }
+    contPROD = i - 1;
+}
+void lerIngrediente(struct Ingrediente ing[], int &contING, Ingrediente principais[], int endIndexPrincipais) {
+    int i = 0;
+    int saida = 1;
+    cout << "-_-_-_- LEITURA INGREDIENTES -_-_-_-";
+
+    while (i < 1000 && saida != 0) {
+        int tempCodigo;
+        cout << "\nCodigo do Ingrediente (Digite 0 para sair): ";
+        cin >> tempCodigo;
+
+        if (tempCodigo > 0) {
+            bool existe = false;
+            for (int j = 0; j < i; j++) {
+                if (ing[j].codigo == tempCodigo) {
+                    existe = true;
+                    break;
+                }
+            }
+            for (int j = 0; j <= endIndexPrincipais; j++) {
+                if (principais[j].codigo == tempCodigo) {
+                    existe = true;
+                    break;
+                }
+            }
+
+            if (!existe) {
+                ing[i].codigo = tempCodigo;
+                cout << "Descricao: ";
+                getline(cin >> ws, ing[i].descricao);
+                cout << "Quantidade estoque: ";
+                cin >> ing[i].quant_estoque;
+                cout << "Estoque minimo: ";
+                cin >> ing[i].estoque_minimo;
+                cout << "Estoque maximo: ";
+                cin >> ing[i].estoque_maximo;
+                cout << "Preco unitario R$: ";
+                cin >> ing[i].preco_unitario;
+                i++;
+            } else {
+                cout << "Erro: Esse codigo ja esta cadastrado no sistema!\n";
+            }
+        } else {
+            saida = 0;
+        }
+    }
+    contING = i - 1;
+}
+void lerCliente(struct Cliente cli[], int &contCLI, Cliente principais[], int endIndexPrincipais) {
+    int i = 0;
+    int saida = 1;
+    cout << "-_-_-_- LER CLIENTE -_-_-_-";
+
+    while (i < 1000 && saida != 0) {
+        int tempCodigo;
+        cout << "\nCodigo do Cliente (Digite 0 para sair): ";
+        cin >> tempCodigo;
+
+        if (tempCodigo > 0) {
+            bool existe = false;
+
             for (int j = 0; j < i; j++) {
                 if (cli[j].codigo == tempCodigo) {
                     existe = true;
                     break;
                 }
             }
+
+            for (int j = 0; j <= endIndexPrincipais; j++) {
+                if (principais[j].codigo == tempCodigo) {
+                    existe = true;
+                    break;
+                }
+            }
+
             if (!existe) {
                 cli[i].codigo = tempCodigo;
                 cout << "Nome: ";
@@ -1044,43 +1140,56 @@ void lerCliente(struct Cliente cli[], int &contCLI) {
 
                 i++;
             } else {
-                cout << "Codigo ja cadastrado no sistema!";
+                cout << "Erro: Esse codigo ja esta cadastrado no sistema!\n";
             }
         }
-        else saida = 0;
+        else {
+            saida = 0;
+        }
     }
     contCLI = i - 1;
 }
-
-void lerGarcom(struct Garcom garcom[], int &contGARCOM) {
+void lerGarcom(struct Garcom garcom[], int &contGARCOM, Garcom principais[], int endIndexPrincipais) {
     int i = 0;
+    int saida = 1;
     cout << "-_-_-_- LER GARCOM -_-_-_-";
-    for (int saida = 1; i < 1000 && saida != 0; i++) {
+
+    while (i < 1000 && saida != 0) {
         int tempCodigo;
-        cout << "\nCodigo do Garcom " << (i + 1) << " (Digite 0 para sair): ";
+        cout << "\nCodigo do Garcom (Digite 0 para sair): ";
         cin >> tempCodigo;
+
         if (tempCodigo > 0) {
             bool existe = false;
+
             for (int j = 0; j < i; j++) {
                 if (garcom[j].codigo == tempCodigo) {
                     existe = true;
                     break;
                 }
             }
+            for (int j = 0; j <= endIndexPrincipais; j++) {
+                if (principais[j].codigo == tempCodigo) {
+                    existe = true;
+                    break;
+                }
+            }
+
             if (!existe) {
                 garcom[i].codigo = tempCodigo;
                 cout << "Nome: ";
                 getline(cin >> ws, garcom[i].nome);
                 i++;
             } else {
-                cout << "Codigo ja cadastrado no sistema!";
+                cout << "Erro: Esse codigo ja esta cadastrado no sistema!\n";
             }
         }
-        else saida = 0;
+        else {
+            saida = 0;
+        }
     }
     contGARCOM = i - 1;
 }
-
 // ====================== MÉTODOS DE INCLUSAO ======================
 
 void incluirCliente(struct Cliente S[], int contS, struct Cliente T[], int contT, struct Cliente A[], int &contA) {
@@ -1322,12 +1431,15 @@ void exibirMinimo(struct Ingrediente S[], int endIndexIngrediente) {
         if (S[i].quant_estoque < S[i].estoque_minimo) {
             int qtdCompra = S[i].estoque_maximo - S[i].quant_estoque;
             double valorCompra = qtdCompra * S[i].preco_unitario;
+            cout << "--------------------------------------" << endl;
             cout <<"Codigo: "<< S[i].codigo << endl;
             cout << "Descricao: "<< S[i].descricao << endl;
             cout << "Quantidade estoque: " << S[i].quant_estoque << endl;
             cout << "Estoque maximo: " << S[i].estoque_maximo << endl;
+            cout << "Preço do ingrediente R$: " << S[i].preco_unitario << endl;
             cout << "Quantidade a ser comprada: " << qtdCompra << endl;
             cout << "Valor da compra R$: " << valorCompra << endl;
+            cout << "--------------------------------------" << endl;
             valorTotal += valorCompra;
         }
     }
@@ -1358,7 +1470,7 @@ void valorTotal(Pedido pedidos[], int contPedidos, ItensPedido itens[], int cont
 
 void exibirCategoria(Categoria categoria[], int &endIndexCategoria) {
     cout << "\n\n<===================== LISTA DE CATEGORIAS  =====================>\n";
-    for (int i = 0; i < endIndexCategoria; i++) {
+    for (int i = 0; i <= endIndexCategoria; i++) {
         cout << "-----------------------------" << endl;
         cout << "Codigo: " << categoria[i].codigo << endl;
         cout << "Descricao: " << categoria[i].descricao << endl;
@@ -1368,7 +1480,7 @@ void exibirCategoria(Categoria categoria[], int &endIndexCategoria) {
 
 void exibirProduto(Produto produto[], int &endIndexProduto) {
     cout << "\n\n<===================== LISTA DE PRODUTOS  =====================>\n";
-    for (int i = 0; i < endIndexProduto; i++) {
+    for (int i = 0; i <= endIndexProduto; i++) {
         cout << "-----------------------------" << endl;
         cout << "Codigo: " << produto[i].codigo << endl;
         cout << "Descricao: " << produto[i].descricao << endl;
@@ -1380,7 +1492,7 @@ void exibirProduto(Produto produto[], int &endIndexProduto) {
 
 void exibirIngredientes(Ingrediente ingrediente[], int &endIndexIngrediente) {
     cout << "\n\n<===================== LISTA DE INGREDIENTES  =====================>\n";
-    for (int i = 0; i < endIndexIngrediente; i++) {
+    for (int i = 0; i <= endIndexIngrediente; i++) {
         cout << "-----------------------------" << endl;
         cout << "Codigo: " << ingrediente[i].codigo << endl;
         cout << "Descricao: " << ingrediente[i].descricao << endl;
@@ -1394,7 +1506,7 @@ void exibirIngredientes(Ingrediente ingrediente[], int &endIndexIngrediente) {
 
 void exibirCliente(Cliente cliente[], int &endIndexCliente) {
 cout << "\n\n<===================== LISTA DE CLIENTES  =====================>\n";
-    for (int i = 0; i < endIndexCliente; i++) {
+    for (int i = 0; i <= endIndexCliente; i++) {
         cout << "-----------------------------" << endl;
         cout << "Codigo: " << cliente[i].codigo << endl;
         cout << "Nome: " << cliente[i].nome << endl;
@@ -1405,7 +1517,7 @@ cout << "\n\n<===================== LISTA DE CLIENTES  =====================>\n"
 
 void exibirGarcom(Garcom garcom[], int &endIndexGarcom) {
     cout << "\n\n<===================== LISTA DE GARCONS  =====================>\n";
-    for (int i = 0; i < endIndexGarcom; i++) {
+    for (int i = 0; i <= endIndexGarcom; i++) {
         cout << "-----------------------------" << endl;
         cout << "Codigo: " << garcom[i].codigo << endl;
         cout << "Nome: " << garcom[i].nome << endl;
@@ -1423,33 +1535,33 @@ void telaInserirCategoria(Categoria* categoriasPrincipais, int &endIndexCategori
     do {
         cout << "\n\n<===================== NOVO CADASTRO CATEGORIA =====================>\n";
 
-        lerCategoria(categoriasNovos, endIndexNovos);
+        lerCategoria(categoriasNovos, endIndexNovos, categoriasPrincipais, endIndexCategorias);
+        if (endIndexNovos >= 0) {
+            Categoria categoriasAtualizados[2000];
+            int quantidadeAtualizados = 0;
 
+            int quantPrincipais = endIndexCategorias + 1;
+            int quantNovos = endIndexNovos + 1;
+
+            incluirCategoria(categoriasPrincipais, quantPrincipais,
+                           categoriasNovos, quantNovos,
+                           categoriasAtualizados, quantidadeAtualizados);
+
+            for (int i = 0; i < quantidadeAtualizados; i++) {
+                categoriasPrincipais[i] = categoriasAtualizados[i];
+            }
+
+            endIndexCategorias = quantidadeAtualizados - 1;
+
+            cout << "\n[Sucesso] " << quantNovos << " Categoria(s) adicionada(s) e ordenado(s) na base principal!" << endl;
+        } else {
+            cout << "\n[Aviso] Nenhuma categoria nova foi cadastrado." << endl;
+        }
         cout << "\n\nDeseja adicionar outra categoria? [S/N]: ";
         cin >> confirma;
     } while (confirma == 's' || confirma == 'S');
 
-    if (endIndexNovos >= 0) {
-        Categoria categoriasAtualizados[2000];
-        int quantidadeAtualizados = 0;
 
-        int quantPrincipais = endIndexCategorias + 1;
-        int quantNovos = endIndexNovos + 1;
-
-        incluirCategoria(categoriasPrincipais, quantPrincipais,
-                       categoriasNovos, quantNovos,
-                       categoriasAtualizados, quantidadeAtualizados);
-
-        for (int i = 0; i < quantidadeAtualizados; i++) {
-            categoriasPrincipais[i] = categoriasAtualizados[i];
-        }
-
-        endIndexCategorias = quantidadeAtualizados - 1;
-
-        cout << "\n[Sucesso] " << quantNovos << " Categoria(s) adicionada(s) e ordenado(s) na base principal!" << endl;
-    } else {
-        cout << "\n[Aviso] Nenhuma categoria nova foi cadastrado." << endl;
-    }
 }
 
 void telaInserirProduto(Produto* produtosPrincipais, int &endIndexProdutos) {
@@ -1460,33 +1572,35 @@ void telaInserirProduto(Produto* produtosPrincipais, int &endIndexProdutos) {
     do {
         cout << "\n\n<===================== NOVO CADASTRO PRODUTO =====================>\n";
 
-        lerProduto(produtosNovos, endIndexNovos);
+        lerProduto(produtosNovos, endIndexNovos, produtosPrincipais, endIndexProdutos);
+
+        if (endIndexNovos >= 0) {
+            Produto produtosAtualizados[2000];
+            int quantidadeAtualizados = 0;
+
+            int quantPrincipais = endIndexProdutos + 1;
+            int quantNovos = endIndexNovos + 1;
+
+            incluirProduto(produtosPrincipais, quantPrincipais,
+                           produtosNovos, quantNovos,
+                           produtosAtualizados, quantidadeAtualizados);
+
+            for (int i = 0; i < quantidadeAtualizados; i++) {
+                produtosPrincipais[i] = produtosAtualizados[i];
+            }
+
+            endIndexProdutos = quantidadeAtualizados - 1;
+
+            cout << "\n[Sucesso] " << quantNovos << " Produto(s) adicionado(s) e ordenado(s) na base principal!" << endl;
+        } else {
+            cout << "\n[Aviso] Nenhum produto novo foi cadastrado." << endl;
+        }
 
         cout << "\n\nDeseja adicionar outro produto? [S/N]: ";
         cin >> confirma;
     } while (confirma == 's' || confirma == 'S');
 
-    if (endIndexNovos >= 0) {
-        Produto produtosAtualizados[2000];
-        int quantidadeAtualizados = 0;
 
-        int quantPrincipais = endIndexProdutos + 1;
-        int quantNovos = endIndexNovos + 1;
-
-        incluirProduto(produtosPrincipais, quantPrincipais,
-                       produtosNovos, quantNovos,
-                       produtosAtualizados, quantidadeAtualizados);
-
-        for (int i = 0; i < quantidadeAtualizados; i++) {
-            produtosPrincipais[i] = produtosAtualizados[i];
-        }
-
-        endIndexProdutos = quantidadeAtualizados - 1;
-
-        cout << "\n[Sucesso] " << quantNovos << " Produto(s) adicionado(s) e ordenado(s) na base principal!" << endl;
-    } else {
-        cout << "\n[Aviso] Nenhum produto novo foi cadastrado." << endl;
-    }
 }
 
 void telaInserirIngrediente(Ingrediente* ingredientesPrincipais, int &endIndexIngredientes) {
@@ -1497,33 +1611,33 @@ void telaInserirIngrediente(Ingrediente* ingredientesPrincipais, int &endIndexIn
     do {
         cout << "\n\n<===================== NOVO CADASTRO INGREDIENTE =====================>\n";
 
-        lerIngrediente(ingredientesNovos, endIndexNovos);
+        lerIngrediente(ingredientesNovos, endIndexNovos, ingredientesPrincipais, endIndexIngredientes);
+        if (endIndexNovos >= 0) {
+            Ingrediente ingredientesAtualizados[2000];
+            int quantidadeAtualizados = 0;
 
+            int quantPrincipais = endIndexIngredientes + 1;
+            int quantNovos = endIndexNovos + 1;
+
+            incluirIngredientes(ingredientesPrincipais, quantPrincipais,
+                           ingredientesNovos, quantNovos,
+                           ingredientesAtualizados, quantidadeAtualizados);
+
+            for (int i = 0; i < quantidadeAtualizados; i++) {
+                ingredientesPrincipais[i] = ingredientesAtualizados[i];
+            }
+
+            endIndexIngredientes = quantidadeAtualizados - 1;
+
+            cout << "\n[Sucesso] " << quantNovos << " Ingrediente(s) adicionado(s) e ordenado(s) na base principal!" << endl;
+        } else {
+            cout << "\n[Aviso] Nenhum Ingrediente novo foi cadastrado." << endl;
+        }
         cout << "\n\nDeseja adicionar outro ingrediente? [S/N]: ";
         cin >> confirma;
     } while (confirma == 's' || confirma == 'S');
 
-    if (endIndexNovos >= 0) {
-        Ingrediente ingredientesAtualizados[2000];
-        int quantidadeAtualizados = 0;
 
-        int quantPrincipais = endIndexIngredientes + 1;
-        int quantNovos = endIndexNovos + 1;
-
-        incluirIngredientes(ingredientesPrincipais, quantPrincipais,
-                       ingredientesNovos, quantNovos,
-                       ingredientesAtualizados, quantidadeAtualizados);
-
-        for (int i = 0; i < quantidadeAtualizados; i++) {
-            ingredientesPrincipais[i] = ingredientesAtualizados[i];
-        }
-
-        endIndexIngredientes = quantidadeAtualizados - 1;
-
-        cout << "\n[Sucesso] " << quantNovos << " Ingrediente(s) adicionado(s) e ordenado(s) na base principal!" << endl;
-    } else {
-        cout << "\n[Aviso] Nenhum Ingrediente novo foi cadastrado." << endl;
-    }
 }
 
 void telaInserirCliente(Cliente* clientesPrincipais, int &endIndexClientes) {
@@ -1534,33 +1648,32 @@ void telaInserirCliente(Cliente* clientesPrincipais, int &endIndexClientes) {
     do {
         cout << "\n\n<===================== NOVO CADASTRO CLIENTE =====================>\n";
 
-        lerCliente(clientesNovos, endIndexNovos);
+        lerCliente(clientesNovos, endIndexNovos, clientesPrincipais, endIndexClientes);
+        if (endIndexNovos >= 0) {
+            Cliente clientesAtualizados[2000];
+            int quantidadeAtualizados = 0;
 
+            int quantPrincipais = endIndexClientes + 1;
+            int quantNovos = endIndexNovos + 1;
+
+            incluirCliente(clientesPrincipais, quantPrincipais,
+                           clientesNovos, quantNovos,
+                           clientesAtualizados, quantidadeAtualizados);
+
+            for (int i = 0; i < quantidadeAtualizados; i++) {
+                clientesPrincipais[i] = clientesAtualizados[i];
+            }
+
+            endIndexClientes = quantidadeAtualizados - 1;
+
+            cout << "\n[Sucesso] " << quantNovos << " cliente(s) adicionado(s) e ordenado(s) na base principal!" << endl;
+        } else {
+            cout << "\n[Aviso] Nenhum cliente novo foi cadastrado." << endl;
+        }
         cout << "\n\nDeseja adicionar outro cliente? [S/N]: ";
         cin >> confirma;
     } while (confirma == 's' || confirma == 'S');
 
-    if (endIndexNovos >= 0) {
-        Cliente clientesAtualizados[2000];
-        int quantidadeAtualizados = 0;
-
-        int quantPrincipais = endIndexClientes + 1;
-        int quantNovos = endIndexNovos + 1;
-
-        incluirCliente(clientesPrincipais, quantPrincipais,
-                       clientesNovos, quantNovos,
-                       clientesAtualizados, quantidadeAtualizados);
-
-        for (int i = 0; i < quantidadeAtualizados; i++) {
-            clientesPrincipais[i] = clientesAtualizados[i];
-        }
-
-        endIndexClientes = quantidadeAtualizados - 1;
-
-        cout << "\n[Sucesso] " << quantNovos << " cliente(s) adicionado(s) e ordenado(s) na base principal!" << endl;
-    } else {
-        cout << "\n[Aviso] Nenhum cliente novo foi cadastrado." << endl;
-    }
 }
 
 void telaInserirGarcom(Garcom* garconsPrincipais, int &endIndexGarcoms) {
@@ -1571,33 +1684,33 @@ void telaInserirGarcom(Garcom* garconsPrincipais, int &endIndexGarcoms) {
     do {
         cout << "\n\n<===================== NOVO CADASTRO GARCOM =====================>\n";
 
-        lerGarcom(garconsNovos, endIndexNovos);
+        lerGarcom(garconsNovos, endIndexNovos, garconsPrincipais, endIndexGarcoms);
+        if (endIndexNovos >= 0) {
+            Garcom garconsAtualizados[2000];
+            int quantidadeAtualizados = 0;
 
+            int quantPrincipais = endIndexGarcoms + 1;
+            int quantNovos = endIndexNovos + 1;
+
+            incluirGarcom(garconsPrincipais, quantPrincipais,
+                           garconsNovos, quantNovos,
+                           garconsAtualizados, quantidadeAtualizados);
+
+            for (int i = 0; i < quantidadeAtualizados; i++) {
+                garconsPrincipais[i] = garconsAtualizados[i];
+            }
+
+            endIndexGarcoms = quantidadeAtualizados - 1;
+
+            cout << "\n[Sucesso] " << quantNovos << " garcom(ns) adicionado(s) e ordenado(s) na base principal!" << endl;
+        } else {
+            cout << "\n[Aviso] Nenhum garcom novo foi cadastrado." << endl;
+        }
         cout << "\n\nDeseja adicionar outro garcom? [S/N]: ";
         cin >> confirma;
     } while (confirma == 's' || confirma == 'S');
 
-    if (endIndexNovos >= 0) {
-        Garcom garconsAtualizados[2000];
-        int quantidadeAtualizados = 0;
 
-        int quantPrincipais = endIndexGarcoms + 1;
-        int quantNovos = endIndexNovos + 1;
-
-        incluirGarcom(garconsPrincipais, quantPrincipais,
-                       garconsNovos, quantNovos,
-                       garconsAtualizados, quantidadeAtualizados);
-
-        for (int i = 0; i < quantidadeAtualizados; i++) {
-            garconsPrincipais[i] = garconsAtualizados[i];
-        }
-
-        endIndexGarcoms = quantidadeAtualizados - 1;
-
-        cout << "\n[Sucesso] " << quantNovos << " garcom(ns) adicionado(s) e ordenado(s) na base principal!" << endl;
-    } else {
-        cout << "\n[Aviso] Nenhum garcom novo foi cadastrado." << endl;
-    }
 }
 
 
@@ -1612,7 +1725,8 @@ void centralPedidos(Cliente *clientes, int endIndexCliente, Garcom *garcons, int
         cout <<"\n<============Central de Pedidos==============>" << endl;
         cout << "1. Adicionar novo pedido" << endl;
         cout << "2. Adicionar produto a um pedido" << endl;
-        cout << "3. Voltar" << endl;
+        cout << "3. Valor total arrecadado com todos os pedidos" << endl;
+        cout << "4. Voltar" << endl;
         cout << "Escolha uma opcao: ";
         cin >> resposta;
 
@@ -1624,6 +1738,8 @@ void centralPedidos(Cliente *clientes, int endIndexCliente, Garcom *garcons, int
                 telaInserirProdutoNoPedido(pedidos, endIndexPedidos, produtos, endIndexProduto, categorias, endIndexCategorias, ips, endIndexIps, cis, endIndexCis, ingredientes, endIndexIngredientes, -1);
                 break;
             case 3:
+                valorTotal(pedidos,endIndexPedidos, ips, endIndexIps, produtos, endIndexProduto);
+            case 4:
                 confirma = -1;
                 break;
             default:
